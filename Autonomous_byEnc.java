@@ -17,7 +17,15 @@ public class Autonomous_byEnc extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        R.initmotors();
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -37,21 +45,21 @@ public class Autonomous_byEnc extends LinearOpMode {
                 rightBackDrive.getCurrentPosition());
 
         telemetry.update();
-
+        // Wait for the game to start (driver presses START)
         leftFrontDrive.setTargetPosition(0);
         rightFrontDrive.setTargetPosition(0);
         leftBackDrive.setTargetPosition(0);
         rightBackDrive.setTargetPosition(0);
-        // Wait for the game to start (driver presses START)
+
         waitForStart();
 
         runtime.reset();
         //Основные действия происходят тут:
-        double degrees = 0; //Тут нужно написать, сколько градусов проехать
+        double degrees = 1000; //Тут нужно написать, сколько градусов проехать
 
         //simulate goystick moving
         double axial = 0;
-        double lateral = -1;
+        double lateral = -0.5;
         double yaw = 0;
 
         double leftFrontPower  = axial + lateral + yaw;
@@ -59,11 +67,16 @@ public class Autonomous_byEnc extends LinearOpMode {
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
 
-        while (rightFrontDrive.getCurrentPosition() < degrees) { //Указать моторы, энкодеры которых будут давать значения
+        while ((rightFrontDrive.getCurrentPosition()< degrees) | (rightBackDrive.getCurrentPosition() < degrees)) { //Указать моторы, энкодеры которых будут давать значения
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+            telemetry.addData("Now is", "%7d :%7d",
+                    rightFrontDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+
+            telemetry.update();
         }
     }
 }
