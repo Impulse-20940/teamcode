@@ -67,15 +67,15 @@ public class Autonomous_byEnc extends LinearOpMode {
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
 
-        while ((rightFrontDrive.getCurrentPosition()< degrees) | (rightBackDrive.getCurrentPosition() < degrees)) { //Указать моторы, энкодеры которых будут давать значения
+        while ((rightFrontDrive.getCurrentPosition()< degrees) | (-rightBackDrive.getCurrentPosition() < degrees)) { //Указать моторы, энкодеры которых будут давать значения
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+
             telemetry.addData("Now is", "%7d :%7d",
                     rightFrontDrive.getCurrentPosition(),
                     rightBackDrive.getCurrentPosition());
-
             telemetry.update();
         }
     }
