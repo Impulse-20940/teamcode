@@ -59,7 +59,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
 
-        while (leftBackDrive.getCurrentPosition() < degrees) { //Указать моторы, энкодеры которых будут давать значения
+        while (rightFrontDrive.getCurrentPosition() < degrees) { //Указать моторы, энкодеры которых будут давать значения
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
