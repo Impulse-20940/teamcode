@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name="TeleOp")
 public class BasicOmniOpMode extends LinearOpMode {
+    //Here is all usages
     Robot R = new Robot();
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
