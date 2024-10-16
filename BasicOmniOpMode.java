@@ -29,10 +29,17 @@ public class BasicOmniOpMode extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+
         runtime.reset();
 
         // Работаем пока не нажат стоп
         while (opModeIsActive()) {
+            double max;
+
+            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            double axial   = -gamepad1.left_stick_y*0.5;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x*0.5;
+            double yaw     =  -gamepad1.right_stick_x*0.5;
             R.teleop();
         }
     }}
