@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name="MainTeleOp")
 public class BasicOmniOpMode extends LinearOpMode {
     //Here is all robot devices and used classes
+    Robot R = new Robot();
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
@@ -15,15 +16,7 @@ public class BasicOmniOpMode extends LinearOpMode {
     DcMotor rightBackDrive = null;
     @Override
     public void runOpMode() {
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        R.get_members();
         // Ждем нажатия кнопки старт
         telemetry.addData("Status", "Initialized");
         telemetry.update();

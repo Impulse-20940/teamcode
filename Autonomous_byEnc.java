@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Autonomous_byEnc")
 public class Autonomous_byEnc extends LinearOpMode {
+    Robot R = new Robot();
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
@@ -16,15 +17,7 @@ public class Autonomous_byEnc extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        R.get_members();
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -51,47 +44,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightBackDrive.setTargetPosition(0);
 
         waitForStart();
-
         runtime.reset();
-        //Основные действия происходят тут:
-        double degrees = 1000; //Тут нужно написать, сколько градусов проехать
-
-        //simulate goystick moving
-
-
-        while (((rightFrontDrive.getCurrentPosition()< degrees)) | (-rightBackDrive.getCurrentPosition() < degrees)) {
-            //Указать моторы, энкодеры которых будут давать значения
-            double axial = 0;
-            double lateral = -0.5;
-            double yaw = 0;
-
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
-            if (rightFrontDrive.getCurrentPosition() < rightBackDrive.getCurrentPosition()) {
-                while (rightFrontDrive.getCurrentPosition() < rightBackDrive.getCurrentPosition()) {
-                    axial = 0;
-                    lateral = -0.5;
-                    yaw = 1;
-                }
-            }
-            if (rightBackDrive.getCurrentPosition() < rightFrontDrive.getCurrentPosition()) {
-                while (rightBackDrive.getCurrentPosition() < rightFrontDrive.getCurrentPosition()) {
-                    axial = 0;
-                    lateral = -0.5;
-                    yaw = -1;
-                }
-            }
-            telemetry.addData("Now is", "%7d :%7d",
-                    rightFrontDrive.getCurrentPosition(),
-                    rightBackDrive.getCurrentPosition());
-            telemetry.update();
-        }
+        R.go_byenc(1000);
     }
 }
