@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Autonomous_byEnc")
 public class Autonomous_byEnc extends LinearOpMode {
-    Robot R = new Robot();
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
@@ -58,21 +57,37 @@ public class Autonomous_byEnc extends LinearOpMode {
         double degrees = 1000; //Тут нужно написать, сколько градусов проехать
 
         //simulate goystick moving
-        double axial = 0;
-        double lateral = -0.5;
-        double yaw = 0;
 
-        double leftFrontPower  = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
 
-        while ((rightFrontDrive.getCurrentPosition()< degrees) | (-rightBackDrive.getCurrentPosition() < degrees)) { //Указать моторы, энкодеры которых будут давать значения
+        while (((rightFrontDrive.getCurrentPosition()< degrees)) | (-rightBackDrive.getCurrentPosition() < degrees)) {
+            //Указать моторы, энкодеры которых будут давать значения
+            double axial = 0;
+            double lateral = -0.5;
+            double yaw = 0;
+
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-
+            if (rightFrontDrive.getCurrentPosition() < rightBackDrive.getCurrentPosition()) {
+                while (rightFrontDrive.getCurrentPosition() < rightBackDrive.getCurrentPosition()) {
+                    axial = 0;
+                    lateral = -0.5;
+                    yaw = 1;
+                }
+            }
+            if (rightBackDrive.getCurrentPosition() < rightFrontDrive.getCurrentPosition()) {
+                while (rightBackDrive.getCurrentPosition() < rightFrontDrive.getCurrentPosition()) {
+                    axial = 0;
+                    lateral = -0.5;
+                    yaw = -1;
+                }
+            }
             telemetry.addData("Now is", "%7d :%7d",
                     rightFrontDrive.getCurrentPosition(),
                     rightBackDrive.getCurrentPosition());

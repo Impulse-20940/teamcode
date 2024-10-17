@@ -27,7 +27,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Autonomous_byTime")
 public class Autonomous_byTime extends LinearOpMode {
-    Robot R = new Robot();
     // Указываем 4 мотора
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
