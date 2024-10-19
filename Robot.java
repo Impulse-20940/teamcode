@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class Robot extends LinearOpMode{
     ElapsedTime runtime = new ElapsedTime();
+    DcMotor manipulator = null;
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
     DcMotor rightFrontDrive = null;
@@ -23,6 +25,7 @@ public class Robot extends LinearOpMode{
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
+        manipulator.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -63,14 +66,14 @@ public class Robot extends LinearOpMode{
             if (rightFrontDrive.getCurrentPosition() < rightBackDrive.getCurrentPosition()) {
                 while (rightFrontDrive.getCurrentPosition() < rightBackDrive.getCurrentPosition()) {
                     axial = 0;
-                    lateral = -0.5;
+                    lateral = 0;
                     yaw = 1;
                 }
             }
             if (rightBackDrive.getCurrentPosition() < rightFrontDrive.getCurrentPosition()) {
                 while (rightBackDrive.getCurrentPosition() < rightFrontDrive.getCurrentPosition()) {
                     axial = 0;
-                    lateral = -0.5;
+                    lateral = 0;
                     yaw = -1;
                 }
             }
