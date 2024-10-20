@@ -4,9 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class Robot extends LinearOpMode{
+    DcMotor lift = null;
+    DcMotor manipulator = null;
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
@@ -18,6 +21,8 @@ public class Robot extends LinearOpMode{
     }
 
     public void get_members() {
+        lift = hardwareMap.get(DcMotor.class, "reechniy_lift");
+        manipulator = hardwareMap.get(DcMotor.class, "manipulator");
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
@@ -60,18 +65,18 @@ public class Robot extends LinearOpMode{
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-            if (rightFrontDrive.getCurrentPosition() < rightBackDrive.getCurrentPosition()) {
-                while (rightFrontDrive.getCurrentPosition() < rightBackDrive.getCurrentPosition()) {
+            if ((rightFrontDrive.getCurrentPosition() - rightBackDrive.getCurrentPosition()) > 300) {
+                while (rightFrontDrive.getCurrentPosition() > rightBackDrive.getCurrentPosition()) {
                     axial = 0;
-                    lateral = -0.5;
-                    yaw = 1;
+                    lateral = 0;
+                    yaw = -1;
                 }
             }
-            if (rightBackDrive.getCurrentPosition() < rightFrontDrive.getCurrentPosition()) {
-                while (rightBackDrive.getCurrentPosition() < rightFrontDrive.getCurrentPosition()) {
+            if ((rightBackDrive.getCurrentPosition() - rightFrontDrive.getCurrentPosition()) > 300) {
+                while (rightBackDrive.getCurrentPosition() > rightFrontDrive.getCurrentPosition()) {
                     axial = 0;
-                    lateral = -0.5;
-                    yaw = -1;
+                    lateral = 0;
+                    yaw = 1;
                 }
             }
             telemetry.addData("Now is", "%7d :%7d",
