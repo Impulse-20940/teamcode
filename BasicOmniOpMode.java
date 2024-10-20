@@ -33,10 +33,11 @@ public class BasicOmniOpMode extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y*0.5;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x*0.5;
             double yaw     =  -gamepad1.right_stick_x*0.5;
+            double axialm = gamepad1.right_stick_y*0.2;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
+            double ManipulatorFrontPower = axialm;            double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
