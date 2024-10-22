@@ -49,11 +49,13 @@ public class Robot extends LinearOpMode{
             telemetry.update();
         }
     }
-    public void go_byenc(double ticks){
+    public void go_byenc_right(double ticks){
         while (((rightFrontDrive.getCurrentPosition()< ticks)) | (-rightBackDrive.getCurrentPosition() < ticks)) {
-            //Указать моторы, энкодеры которых будут давать значения
+            double enc = (leftFrontDrive.getCurrentPosition()+rightFrontDrive.getCurrentPosition())/2;
+            double kp = 0; //Указать коэффициент
+            double p_reg = enc*kp;
             double axial = 0;
-            double lateral = -0.5;
+            double lateral = p_reg;
             double yaw = 0;
 
             double leftFrontPower  = axial + lateral + yaw;

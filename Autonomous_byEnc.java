@@ -45,6 +45,6 @@ public class Autonomous_byEnc extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        R.go_byenc(1000);
+        R.go_byenc_right(1000);
     }
 }
