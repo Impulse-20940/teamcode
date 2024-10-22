@@ -27,7 +27,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Autonomous_byTime")
 public class Autonomous_byTime extends LinearOpMode {
-    Robot R = new Robot();
+
     // Указываем 4 мотора
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
@@ -36,7 +36,17 @@ public class Autonomous_byTime extends LinearOpMode {
     DcMotor rightBackDrive = null;
     @Override
     public void runOpMode() {
-        R.get_members();
+        Robot R = new Robot();
+        R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
@@ -44,7 +54,7 @@ public class Autonomous_byTime extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
 
-        R.go_bytime(0, 1, 0, 3.0);
+        R.go_bytime(0, 0.5, 0, 3.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
