@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Robot{
     //DcMotor lift = null;
     //DcMotor manipulator = null;
+    Servo klesh;
+    DcMotor man;
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
@@ -30,7 +33,8 @@ public class Robot{
     }
     public void get_members() {
         //lift = hardwareMap.get(DcMotor.class, "reechniy_lift");
-        //manipulator = hardwareMap.get(DcMotor.class, "manipulator");
+        man = hardwareMap.get(DcMotor.class, "m");
+        klesh = hardwareMap.get(Servo.class, "kl");
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
@@ -64,7 +68,7 @@ public class Robot{
 
     public void go_byenc_right(double ticks) {
         get_members();
-        while ((Math.abs(leftFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
             //double enc = (Math.abs(rightFrontDrive.getCurrentPosition())+Math.abs(rightBackDrive.getCurrentPosition()))/2;
             //double er = ticks-enc;
             //double kp = 0;//here is coeff
@@ -82,15 +86,15 @@ public class Robot{
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-            if ((Math.abs(leftFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
-                while ((Math.abs(leftFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
                     axial = 0;
                     lateral = 0;
                     yaw = -1;
                 }
             }
-            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(leftFrontDrive.getCurrentPosition())) > 300) {
-                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(leftFrontDrive.getCurrentPosition())) > 300) {
+            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
                     axial = 0;
                     lateral = 0;
                     yaw = 1;
@@ -108,44 +112,36 @@ public class Robot{
         //axiall это axial для реечного лифта
         //axialm это axial для манипулятора(качельки) если это так роботает конечно))))
         //double axiall = gamepad2.left_stick_y*0.1;
-        //double axialm = gamepad2.right_stick_y*0.2;
-
+        double axialm = -gamepad2.right_stick_y*0.4+0.2;
         double axial   = -gamepad1.left_stick_y*0.5;
         double lateral =  gamepad1.left_stick_x*0.5;
         double yaw     =  -gamepad1.right_stick_x*0.5;
-
+        double servo_position = gamepad2.left_stick_y+0.2;
         //double liftPower = axiall;
-        //double ManipulatorPower = axialm;
+        double ManPower = axialm;
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
 
-
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
-        //max = Math.max(max, Math.abs(ManipulatorPower));
+        max = Math.max(max, Math.abs(ManPower));
         //max = Math.max(max, Math.abs(liftPower));
 
         if (max > 1.0) {
             //liftPower /=max;
-            //ManipulatorPower /= max;
+            ManPower /= max;
             leftFrontPower  /= max;
             rightFrontPower /= max;
             leftBackPower   /= max;
             rightBackPower  /= max;
         }
 
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
-
         //lift.setPower(liftPower);
-        //manipulator.setPower(ManipulatorPower);
+        klesh.setPosition(servo_position);
+        man.setPower(ManPower);
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
         leftBackDrive.setPower(leftBackPower);
