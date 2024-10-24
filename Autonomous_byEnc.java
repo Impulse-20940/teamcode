@@ -40,6 +40,6 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightBackDrive.setTargetPosition(0);
         rightFrontDrive.setTargetPosition(0);
         runtime.reset();
-        R.go_byenc_right(1000);
+        R.go_byenc_right(1500);
     }
 }
