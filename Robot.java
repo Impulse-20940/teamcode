@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Robot{
     //DcMotor lift = null;
     //DcMotor manipulator = null;
+    double ticks;
     Servo klesh;
     DcMotor man;
     ElapsedTime runtime = new ElapsedTime();
@@ -73,8 +74,9 @@ public class Robot{
             double er = ticks-enc;
             double kp = 0.001;//here is coeff
             double p_reg = er*kp;
-             double axial = 0;
-            double lateral = p_reg;//write lateral = er*kp
+
+            double axial = 0;
+            double lateral = p_reg;
             double yaw = 0;
 
             double leftFrontPower = axial + lateral + yaw;
@@ -100,6 +102,217 @@ public class Robot{
                     yaw = 1;
                 }
             }
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    rightFrontDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+    public void go_byenc_left(double ticks) {
+        get_members();
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
+            double enc = rightBackDrive.getCurrentPosition();
+            double er = ticks-enc;
+            double kp = 0.001;//here is coeff
+            double p_reg = er*kp;
+
+            double axial = 0;
+            double lateral = -p_reg;
+            double yaw = 0;
+
+            double leftFrontPower = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = -1;
+                }
+            }
+            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = 1;
+                }
+            }
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    rightFrontDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+    public void go_byenc_forward(double ticks) {
+        get_members();
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
+            double enc = rightBackDrive.getCurrentPosition();
+            double er = ticks-enc;
+            double kp = 0.001;//here is coeff
+            double p_reg = er*kp;
+
+            double axial = p_reg;
+            double lateral = 0;
+            double yaw = 0;
+
+            double leftFrontPower = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = -1;
+                }
+            }
+            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = 1;
+                }
+            }
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    rightFrontDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+    public void go_byenc_backward(double ticks) {
+        get_members();
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
+            double enc = rightBackDrive.getCurrentPosition();
+            double er = ticks-enc;
+            double kp = 0.001;//here is coeff
+            double p_reg = er*kp;
+
+            double axial = -p_reg;
+            double lateral = 0;
+            double yaw = 0;
+
+            double leftFrontPower = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = -1;
+                }
+            }
+            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = 1;
+                }
+            }
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    rightFrontDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+    public void turn_byenc_right(double ticks) {
+        get_members();
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
+            double enc = rightBackDrive.getCurrentPosition();
+            double er = ticks-enc;
+            double kp = 0.001;//here is coeff
+            double p_reg = er*kp;
+
+            double axial = 0;
+            double lateral = 0;
+            double yaw = p_reg;
+
+            double leftFrontPower = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = -1;
+                }
+            }
+            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = 1;
+                }
+            }
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    rightFrontDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+    public void turn_byenc_left(double ticks) {
+        get_members();
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
+            double enc = rightBackDrive.getCurrentPosition();
+            double er = ticks-enc;
+            double kp = 0.001;//here is coeff
+            double p_reg = er*kp;
+
+            double axial = 0;
+            double lateral = 0;
+            double yaw = -p_reg;
+
+            double leftFrontPower = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = -1;
+                }
+            }
+            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
+                    axial = 0;
+                    lateral = 0;
+                    yaw = 1;
+                }
+            }
+
             telemetry.addData("Now is", "%7d :%7d",
                     rightFrontDrive.getCurrentPosition(),
                     rightBackDrive.getCurrentPosition());

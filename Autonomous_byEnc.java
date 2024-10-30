@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Autonomous_byEnc")
 public class Autonomous_byEnc extends LinearOpMode {
-
+    double ticks;
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
@@ -39,6 +39,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightBackDrive.setTargetPosition(0);
         rightFrontDrive.setTargetPosition(0);
         runtime.reset();
+
         R.go_byenc_right(1500);
     }
 }
