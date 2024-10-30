@@ -69,12 +69,12 @@ public class Robot{
     public void go_byenc_right(double ticks) {
         get_members();
         while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
-            //double enc = (Math.abs(rightFrontDrive.getCurrentPosition())+Math.abs(rightBackDrive.getCurrentPosition()))/2;
-            //double er = ticks-enc;
-            //double kp = 0;//here is coeff
-            //double p_reg = er*kp;
+            double enc = rightBackDrive.getCurrentPosition();
+            double er = ticks-enc;
+            double kp = 0.001;//here is coeff
+            double p_reg = er*kp;
              double axial = 0;
-            double lateral = 0.5;//write lateral = er*kp
+            double lateral = p_reg;//write lateral = er*kp
             double yaw = 0;
 
             double leftFrontPower = axial + lateral + yaw;
@@ -123,7 +123,6 @@ public class Robot{
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
-
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
