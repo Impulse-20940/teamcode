@@ -43,21 +43,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightFrontDrive.setTargetPosition(0);
         runtime.reset();
 
-        R.go_byenc_right(1700);
-
-        if ((rightFrontDrive.getCurrentPosition() > ticks)  |  (rightBackDrive.getCurrentPosition() > ticks)) {
-            axial = 0;
-            lateral = 0;
-            yaw = 0;
-        }
-        double leftFrontPower = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower = axial - lateral + yaw;
-        double rightBackPower = axial + lateral - yaw;
-
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        R.go_byenc(0,1,0,1700);
+        R.stop_system(1700);
     }
 }

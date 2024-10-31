@@ -11,21 +11,20 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class BasicOmniOpMode_Linear extends LinearOpMode {
     //Манипулятор это качелька
-    //private Servo klesh = null;
+    private Servo klesh = null;
     //private DcMotor lift = null;
-    private DcMotor manipulator = null;
+    private DcMotor man = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
-
     public void runOpMode() {
         Robot R = new Robot();
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
-        //klesh = hardwareMap.get(Servo.class, "kleahnya")
+        klesh = hardwareMap.get(Servo.class, "kl");
         //lift = hardwareMap.get(DcMotor.class, "reechniy_lift");
-        //manipulator = hardwareMap.get(DcMotor.class, "manipulator");
+        man = hardwareMap.get(DcMotor.class, "m");
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
@@ -33,8 +32,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
 
         //lift.setDirection(DcMotorSimple.Direction.FORWARD);
-        //manipulator.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        man.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -44,7 +42,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-
         while (opModeIsActive()) {
             R.teleop();
         }
