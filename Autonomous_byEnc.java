@@ -13,6 +13,9 @@ public class Autonomous_byEnc extends LinearOpMode {
     DcMotor leftBackDrive = null;
     DcMotor rightFrontDrive = null;
     DcMotor rightBackDrive = null;
+    double axial = 0;
+    double lateral = 0;
+    double yaw = 0;
 
     @Override
     public void runOpMode() {
@@ -40,6 +43,21 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightFrontDrive.setTargetPosition(0);
         runtime.reset();
 
-        R.go_byenc_right(1500);
+        R.go_byenc_right(1700);
+
+        if ((rightFrontDrive.getCurrentPosition() > ticks)  |  (rightBackDrive.getCurrentPosition() > ticks)) {
+            axial = 0;
+            lateral = 0;
+            yaw = 0;
+        }
+        double leftFrontPower = axial + lateral + yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double leftBackPower = axial - lateral + yaw;
+        double rightBackPower = axial + lateral - yaw;
+
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
     }
 }

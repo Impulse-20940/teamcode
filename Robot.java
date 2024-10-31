@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Robot{
     //DcMotor lift = null;
     //DcMotor manipulator = null;
-    double ticks;
     Servo klesh;
     DcMotor man;
     ElapsedTime runtime = new ElapsedTime();
@@ -72,7 +71,7 @@ public class Robot{
         while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
             double enc = rightBackDrive.getCurrentPosition();
             double er = ticks-enc;
-            double kp = 0.001;//here is coeff
+            double kp = 0.00083;//here is coeff
             double p_reg = er*kp;
 
             double axial = 0;
@@ -92,14 +91,14 @@ public class Robot{
                 while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 300) {
                     axial = 0;
                     lateral = 0;
-                    yaw = -1;
+                    yaw = 1;
                 }
             }
             if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
                 while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 300) {
                     axial = 0;
                     lateral = 0;
-                    yaw = 1;
+                    yaw = -1;
                 }
             }
 
