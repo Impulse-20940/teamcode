@@ -12,7 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class BasicOmniOpMode_Linear extends LinearOpMode {
     //Манипулятор это качелька
     private Servo klesh = null;
-    //private DcMotor lift = null;
+    double axialm = 0;
+    //private DcMotor lift = null;.............................................................................................................
     private DcMotor man = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;

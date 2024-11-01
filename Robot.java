@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Robot{
     //DcMotor lift = null;
     double servo_position = 0;
+    double axialm = 0;
     DcMotor man = null;
     Servo klesh;
     ElapsedTime runtime = new ElapsedTime();
@@ -68,7 +69,6 @@ public class Robot{
             telemetry.update();
         }
     }
-
     public void go_byenc(double fb, double lr, double trn, double ticks) {
         get_members();
         while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
@@ -169,12 +169,18 @@ public class Robot{
         //axiall это axial для реечного лифта
         //axialm это axial для манипулятора(качельки)
         //double axiall = gamepad2.left_stick_y*0.1;
-        double axialm = -gamepad2.right_stick_y*0.4+0.01;
         double axial   = -gamepad1.left_stick_y*0.5;
         double lateral = gamepad1.left_stick_x*0.5;
         double yaw = -gamepad1.right_stick_x*0.5;
         double ls = gamepad2.left_stick_y-0.5;
         double servo_position = ls;
+        double rt = gamepad2.right_trigger;
+        axialm = -gamepad2.right_stick_y*0.4+0.05;
+        if (rt > 0){
+            axialm = 0.7;
+            man.setPower(axialm);
+            L.sleep(300);
+        }
         //double liftPower = axiall;
         double ManPower = axialm;
         double leftFrontPower  = axial + lateral + yaw;
@@ -186,7 +192,6 @@ public class Robot{
         max = Math.max(max, Math.abs(rightBackPower));
         max = Math.max(max, Math.abs(ManPower));
         //max = Math.max(max, Math.abs(liftPower));
-
         if (max > 1.0) {
             //liftPower /=max;
             ManPower /= max;
@@ -209,7 +214,7 @@ public class Robot{
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         //telemetry.addData("manipulator", "%4.2f" , ManipulatorPower);
         //telemetry.addData("reechniy_lift", "$4.2f", liftPower);
-        telemetry.addData("servo", "$4.2f", servo_position);
+        telemetry.addData("servo", servo_position);
         telemetry.update();
     }
 }
