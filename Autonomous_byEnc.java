@@ -21,6 +21,7 @@ public class Autonomous_byEnc extends LinearOpMode {
     public void runOpMode() {
         Robot R = new Robot();
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        //*************Не трогать!****************
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
@@ -30,9 +31,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        // Выводим телеметрию с удачным сбросом значений энкодера на консоль Driver Station
-
-        telemetry.update();
+        //*****************************************
         // Wait for the game to start (driver presses START)
         waitForStart();
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -42,8 +41,10 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightBackDrive.setTargetPosition(0);
         rightFrontDrive.setTargetPosition(0);
         runtime.reset();
+        //***********Main code*************
+        //Simple parking
+        R.go_byenc(0,1,0,1470);
+        R.stop_system(1470);
 
-        R.go_byenc(0,1,0,1700);
-        R.stop_system(1700);
     }
 }
