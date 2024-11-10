@@ -27,7 +27,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Autonomous_byTime")
 public class Autonomous_byTime extends LinearOpMode {
-
     // Указываем 4 мотора
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
@@ -38,6 +37,7 @@ public class Autonomous_byTime extends LinearOpMode {
     public void runOpMode() {
         Robot R = new Robot();
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        runtime.reset();
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");

@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Robot{
     //DcMotor lift = null;
-    double servo_position = 0;
     double axialm = 0;
     DcMotor man = null;
     Servo klesh;
@@ -35,9 +34,6 @@ public class Robot{
     }
 
     public void get_members() { //и это!
-        double axial;
-        double lateral;
-        double yaw;
         //lift = hardwareMap.get(DcMotor.class, "reechniy_lift");
         man = hardwareMap.get(DcMotor.class, "m");
         klesh = hardwareMap.get(Servo.class, "kl");
@@ -79,19 +75,23 @@ public class Robot{
             double axial = 0;
             double lateral = 0;
             double yaw = 0;
-            double enc = rightBackDrive.getCurrentPosition();
-            double er = ticks-enc;
+            double enc1 = rightBackDrive.getCurrentPosition();
+            double enc2 = Math.abs(rightFrontDrive.getCurrentPosition());
+            double er = ticks-(enc1+enc2)/2;
             double kp = 0.0027;//here is coeff
             double p_reg = er*kp;
-            double rev_er = -ticks- enc;
-            double rev_preg = rev_er*kp;
+            double wh_er1 = enc1 - enc2;
+            double wh_er2 = enc2 - enc1;
+            double wh_preg1 = wh_er1 * kp;
+            double wh_preg2 = wh_er2 * kp;
+
             if (fb == 1) {
                 axial = p_reg;
                 lateral = 0;
                 yaw = 0;
             }
             if (fb == -1) {
-                axial = rev_preg;
+                axial = p_reg;
                 lateral = 0;
                 yaw = 0;
             }
@@ -102,7 +102,7 @@ public class Robot{
             }
             if (lr == -1){
                 axial = 0;
-                lateral = rev_preg;
+                lateral = p_reg;
                 yaw = 0;
             }
             if (trn == 1) {
@@ -113,21 +113,21 @@ public class Robot{
             if (trn == -1){
                 axial = 0;
                 lateral = 0;
-                yaw = rev_preg;
+                yaw = p_reg;
             }
 
-            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 100) {
-                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 100) {
+            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 20) {
+                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 20) {
                     axial = 0;
                     lateral = 0;
-                    yaw = rev_preg;
+                    yaw = wh_preg2;
                 }
             }
-            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 100) {
-                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 100) {
+            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 20) {
+                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 20) {
                     axial = 0;
                     lateral = 0;
-                    yaw = p_reg;
+                    yaw = wh_preg1;
                 }
             }
 
@@ -147,17 +147,45 @@ public class Robot{
             telemetry.update();
         }
     }
+    public void go_byenc_xy(double x, double y) {
+        get_members();
+        double enc1 = leftBackDrive.getCurrentPosition();
+        double enc2 = Math.abs(leftFrontDrive.getCurrentPosition());
+        double enc = (enc1+enc2)/2;
+        while ((enc < x) && (enc < y)){
+            enc1 = leftBackDrive.getCurrentPosition();
+            enc2 = Math.abs(leftFrontDrive.getCurrentPosition());
+            enc = (enc1+enc2)/2;
+            double kp = 0.0027;
+            double x_p_reg = (x-enc)*kp;
+            double y_p_reg = (y-enc)*kp;
 
+            double axial = y_p_reg;
+            double lateral = x_p_reg;
+            double yaw = 0;
+
+            double leftFrontPower = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    rightFrontDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+    }
     public void stop_system(double ticks){
         get_members();
         double axial = 0;
         double lateral = 0;
         double yaw = 0;
-        if ((rightFrontDrive.getCurrentPosition() > ticks)  |  (rightBackDrive.getCurrentPosition() > ticks)) {
-            axial = 0;
-            lateral = 0;
-            yaw = 0;
-        }
+
         double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower = axial - lateral + yaw;
@@ -178,8 +206,7 @@ public class Robot{
         double axial   = -gamepad1.left_stick_y*0.5;
         double lateral = gamepad1.left_stick_x*0.5;
         double yaw = -gamepad1.right_stick_x*0.5;
-        double ls = gamepad2.left_stick_y-0.5;
-        double servo_position = ls;
+        double servo_position = gamepad2.left_stick_y-0.5;
         double rt = gamepad2.right_trigger;
         axialm = -gamepad2.right_stick_y*0.4+0.05;
         if (rt > 0){

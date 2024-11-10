@@ -7,15 +7,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Autonomous_byEnc")
 public class Autonomous_byEnc extends LinearOpMode {
-    double ticks;
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
     DcMotor rightFrontDrive = null;
     DcMotor rightBackDrive = null;
-    double axial = 0;
-    double lateral = 0;
-    double yaw = 0;
 
     @Override
     public void runOpMode() {
@@ -38,12 +34,17 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         rightBackDrive.setTargetPosition(0);
         rightFrontDrive.setTargetPosition(0);
         runtime.reset();
         //***********Main code*************
         //Simple parking
-        R.go_byenc(0,1,0,1470);
+        R.go_byenc_xy(1470, 0);
+        //R.go_byenc(0,1,0,1470);
         R.stop_system(1470);
 
     }
