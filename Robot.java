@@ -11,7 +11,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Robot{
     //DcMotor lift = null;
+    double x_er_last = 0;
+    double y_er_last = 0;
+    double x_p_reg = 0;
+    double y_p_reg = 0;
     double axialm = 0;
+    double dom = 0;
+    double axial = 0;
+    double lateral = 0;
+    double yaw = 0;
     DcMotor man = null;
     Servo klesh;
     ElapsedTime runtime = new ElapsedTime();
@@ -50,7 +58,19 @@ public class Robot{
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
     }
+    public void init_enc_motors() {
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void reset_using_motors() {
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
     public void go_bytime(double axial, double lateral, double yaw, double time) {
         get_members();
         double leftFrontPower  = axial + lateral + yaw;
@@ -71,7 +91,7 @@ public class Robot{
 
     public void go_byenc(double fb, double lr, double trn, double ticks) {
         get_members();
-        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (Math.abs(rightBackDrive.getCurrentPosition()) < ticks)) {
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (rightBackDrive.getCurrentPosition() < ticks)) {
             double axial = 0;
             double lateral = 0;
             double yaw = 0;
@@ -116,15 +136,15 @@ public class Robot{
                 yaw = p_reg;
             }
 
-            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 20) {
-                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - Math.abs(rightBackDrive.getCurrentPosition())) > 20) {
+            if ((Math.abs(rightFrontDrive.getCurrentPosition()) - rightBackDrive.getCurrentPosition()) > 20) {
+                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - rightBackDrive.getCurrentPosition()) > 20) {
                     axial = 0;
                     lateral = 0;
                     yaw = wh_preg2;
                 }
             }
-            if ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 20) {
-                while ((Math.abs(rightBackDrive.getCurrentPosition()) - Math.abs(rightFrontDrive.getCurrentPosition())) > 20) {
+            if ((rightBackDrive.getCurrentPosition() - Math.abs(rightFrontDrive.getCurrentPosition())) > 20) {
+                while ((rightBackDrive.getCurrentPosition() - Math.abs(rightFrontDrive.getCurrentPosition())) > 20) {
                     axial = 0;
                     lateral = 0;
                     yaw = wh_preg1;
@@ -147,40 +167,76 @@ public class Robot{
             telemetry.update();
         }
     }
-    public void go_byenc_xy(double x, double y) {
+    public void go_byenc_x(double x, double napr) {
         get_members();
-        double enc1 = leftBackDrive.getCurrentPosition();
-        double enc2 = Math.abs(leftFrontDrive.getCurrentPosition());
-        double enc = (enc1+enc2)/2;
-        while ((enc < x) && (enc < y)){
-            enc1 = leftBackDrive.getCurrentPosition();
-            enc2 = Math.abs(leftFrontDrive.getCurrentPosition());
-            enc = (enc1+enc2)/2;
-            double kp = 0.0027;
-            double x_p_reg = (x-enc)*kp;
-            double y_p_reg = (y-enc)*kp;
+        init_enc_motors();
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < x) | (rightBackDrive.getCurrentPosition() < x)) {
+            double enc1 = rightBackDrive.getCurrentPosition();
+            double enc2 = Math.abs(rightFrontDrive.getCurrentPosition());
+            double kp = 0.0017;//here is coeff
+            double kd = 0.0007; //differential coefficient
+            reset_using_motors();
+            while ((enc2 != x) | (enc1 != x)) {
+                double x_er = x*napr - enc1*napr;
+                x_p_reg = (x_er)*kp;
+                double x_pd = x_p_reg + (x_er_last-x_er)*kd;
+                axial = 0;
+                lateral = x_pd;
+                yaw = 0;
 
-            double axial = y_p_reg;
-            double lateral = x_p_reg;
-            double yaw = 0;
+                double leftFrontPower = axial + lateral + yaw;
+                double rightFrontPower = axial - lateral - yaw;
+                double leftBackPower = axial - lateral + yaw;
+                double rightBackPower = axial + lateral - yaw;
 
-            double leftFrontPower = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower = axial - lateral + yaw;
-            double rightBackPower = axial + lateral - yaw;
-
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(leftBackPower);
+                rightBackDrive.setPower(rightBackPower);
+            }
 
             telemetry.addData("Now is", "%7d :%7d",
                     rightFrontDrive.getCurrentPosition(),
                     rightBackDrive.getCurrentPosition());
             telemetry.update();
+
         }
     }
-    public void stop_system(double ticks){
+    public void go_byenc_y(double y, double napr) {
+        get_members();
+        init_enc_motors();
+        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < y) | (rightBackDrive.getCurrentPosition() < y)) {
+            double enc1 = rightBackDrive.getCurrentPosition();
+            double enc2 = Math.abs(rightFrontDrive.getCurrentPosition());
+            double kp = 0.0017;//here is coeff
+            double kd = 0.0007; //differential coefficient
+            while ((enc2 != y) | (enc1 != y)) {
+                double y_er  = y*napr - enc2*napr;
+                y_p_reg = (y_er)*kp;
+                double y_pd = y_p_reg + (y_er_last-y_er)*kd;
+                double axial = y_pd;
+                double lateral = 0;
+                double yaw = 0;
+
+                double leftFrontPower = axial + lateral + yaw;
+                double rightFrontPower = axial - lateral - yaw;
+                double leftBackPower = axial - lateral + yaw;
+                double rightBackPower = axial + lateral - yaw;
+
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(leftBackPower);
+                rightBackDrive.setPower(rightBackPower);
+            }
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    rightFrontDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+
+        }
+    }
+    public void stop_system(){
         get_members();
         double axial = 0;
         double lateral = 0;
@@ -203,17 +259,27 @@ public class Robot{
         //axiall это axial для реечного лифта
         //axialm это axial для манипулятора(качельки)
         //double axiall = gamepad2.left_stick_y*0.1;
-        double axial   = -gamepad1.left_stick_y*0.5;
-        double lateral = gamepad1.left_stick_x*0.5;
-        double yaw = -gamepad1.right_stick_x*0.5;
-        double servo_position = gamepad2.left_stick_y-0.5;
         double rt = gamepad2.right_trigger;
-        axialm = -gamepad2.right_stick_y*0.4+0.05;
-        if (rt > 0){
-            axialm = 0.7;
-            man.setPower(axialm);
-            L.sleep(300);
+        // Мега сигма код на его разработку ушла целая недел
+        while (rt > 0.5) {
+            double axial = -gamepad1.left_stick_y*0.25;
+            double lateral = gamepad1.left_stick_x*0.25;
+            double yaw = -gamepad1.right_stick_x*0.25;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+
         }
+        double axial = -gamepad1.left_stick_y*0.7;
+        double lateral = gamepad1.left_stick_x*0.7;
+        double yaw = -gamepad1.right_stick_x*0.7;
+        double servo_position = gamepad2.left_stick_y-0.5;
+        axialm = -gamepad2.right_stick_y*0.4+0.05;
         /*
         double lt = gamepad2.left_trigger;
         while (lt > 0){
@@ -229,6 +295,7 @@ public class Robot{
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
+
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));

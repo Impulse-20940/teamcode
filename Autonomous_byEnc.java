@@ -35,17 +35,17 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         rightBackDrive.setTargetPosition(0);
         rightFrontDrive.setTargetPosition(0);
         runtime.reset();
         //***********Main code*************
         //Simple parking
-        R.go_byenc_xy(1470, 0);
-        //R.go_byenc(0,1,0,1470);
-        R.stop_system(1470);
-
+        R.go_byenc_x(1470, 1);
+        //R.go_byenc(0,1,0,1470)
+        R.stop_system();
+        R.go_byenc_y(300);
     }
 }
