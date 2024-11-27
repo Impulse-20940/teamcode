@@ -43,9 +43,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         runtime.reset();
         //***********Main code*************
         //Simple parking
+
         R.go_byenc_x(1470, 1);
-        //R.go_byenc(0,1,0,1470)
-        R.stop_system();
-        R.go_byenc_y(300);
     }
 }

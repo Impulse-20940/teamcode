@@ -13,7 +13,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     //Манипулятор это качелька
     private Servo klesh = null;
     double axialm = 0;
-    //private DcMotor lift = null;.............................................................................................................
+    private DcMotor lift = null;
     private DcMotor man = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -24,7 +24,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         Robot R = new Robot();
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
         klesh = hardwareMap.get(Servo.class, "kl");
-        //lift = hardwareMap.get(DcMotor.class, "reechniy_lift");
+        lift = hardwareMap.get(DcMotor.class, "l1");
         man = hardwareMap.get(DcMotor.class, "m");
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
@@ -32,7 +32,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
 
-        //lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift.setDirection(DcMotorSimple.Direction.FORWARD);
         man.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
