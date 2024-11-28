@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,17 +10,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Robot{
+    BNO055IMU imu;
+    Orientation angles;
+    Acceleration gravity;
     DcMotor lift = null;
-    double x_er_last = 0;
-    double y_er_last = 0;
-    double x_p_reg = 0;
-    double y_p_reg = 0;
-    double axialm = 0;
-    double dom = 0;
-    double axial = 0;
-    double lateral = 0;
-    double yaw = 0;
     DcMotor man = null;
     Servo klesh;
     ElapsedTime runtime = new ElapsedTime();
@@ -32,6 +33,18 @@ public class Robot{
     Gamepad gamepad1;
     Gamepad gamepad2;
     LinearOpMode L;
+
+    double x_er_last = 0;
+    double y_er_last = 0;
+    double x_p_reg = 0;
+    double y_p_reg = 0;
+    double axialm = 0;
+    double dom = 0;
+    double axial = 0;
+    double lateral = 0;
+    double yaw = 0;
+    double Er_last = 0;
+    double Er = 0;
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
         //НЕ ТРОГАТЬ!
         this.hardwareMap = hardwareMap;
@@ -49,6 +62,7 @@ public class Robot{
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         //lift.setDirection(DcMotorSimple.Direction.FORWARD);
         //manipulator.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -57,6 +71,7 @@ public class Robot{
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
     }
     public void init_enc_motors() {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -193,9 +208,10 @@ public class Robot{
             //double kd = 0.007; //differential coefficient
             double x_er = x*napr - (enc1*napr+enc2*napr)/2;
             x_p_reg = (x_er)*kp;
-            //double x_d_reg = (x_er - x_er_last)*kd;
+            //double x_er_d = x_er - x_er_last;
+            //double x_d_reg = kd*x_er_d*(1/x_er);
             //double x_pd = x_p_reg + x_d_reg;
-            //x_er_last = x_er;
+            x_er_last = x_er;
             axial = 0;
             lateral = x_p_reg;
             //lateral = x_pd;
@@ -249,9 +265,31 @@ public class Robot{
 
         }
     }
-    public void turn_imu(){
+    public void turn(double angle, double dir){
+        get_members();
+        if (dir < 0) {
+            angle *= -1;
+        }
+        while (Math.abs(angle+7) > Math.abs(getTurnAngle())  && L.opModeIsActive()){
+            if (dir < 0){
+                Er = (angle+6) - (getTurnAngle());
+            }
+            else if (dir > 0) {
+                Er = (angle-6) - (getTurnAngle());
+            }
+            double kp = 0.0012;
+            double P = kp * Er;
+            double kd = -0.0005;
+            double er_d = Er - Er_last;
+            double D = kd*er_d*(1/Er);
+            Er_last = Er;
 
+            setMPower(0, -P+D, 0, P+D);
+            telemetry.addData("getAngle()", getTurnAngle());
+            telemetry.update();
+        }
     }
+
     public void stop_system(){
         get_members();
         double axial = 0;
@@ -330,10 +368,7 @@ public class Robot{
         lift.setPower(liftPower);
         klesh.setPosition(servo_position);
         man.setPower(ManPower);
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
 
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
@@ -341,5 +376,18 @@ public class Robot{
         telemetry.addData("l1", "$4.2f", liftPower);
         telemetry.addData("servo", servo_position);
         telemetry.update();
+    }
+    double getTurnAngle() {
+        get_members();
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        gravity  = imu.getGravity();
+        return angles.firstAngle;
+    }
+    void setMPower(double rb,double rf,double lf,double lb){
+        get_members();//Устоновить мощность на моторы
+        rightFrontDrive.setPower(rf);
+        leftFrontDrive.setPower(lf);
+        rightBackDrive.setPower(rb);
+        leftBackDrive.setPower(lb);
     }
 }

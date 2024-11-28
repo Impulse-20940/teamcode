@@ -14,6 +14,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private Servo klesh = null;
     double axialm = 0;
     private DcMotor lift = null;
+    //Скорость лифта = 0.34545455 м\с
     private DcMotor man = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
