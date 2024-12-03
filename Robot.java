@@ -20,6 +20,7 @@ public class Robot{
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
+    //DcMotor lift2 = null;
     DcMotor lift = null;
     DcMotor man = null;
     Servo klesh;
@@ -55,6 +56,7 @@ public class Robot{
     }
 
     public void get_members() { //и это!
+        //lift2 = hardwareMap.get(DcMotor.class, "l2");
         lift = hardwareMap.get(DcMotor.class, "l1");
         man = hardwareMap.get(DcMotor.class, "m");
         klesh = hardwareMap.get(Servo.class, "kl");
@@ -371,6 +373,7 @@ public class Robot{
         }
          */
         double liftPower = axiall;
+        //double liftPower2 = axiall;
         double ManPower = axialm;
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
@@ -381,9 +384,11 @@ public class Robot{
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
         max = Math.max(max, Math.abs(ManPower));
+        //max = Math.max(max, Math.abs(liftPower2));
         max = Math.max(max, Math.abs(liftPower));
         if (max > 1.0) {
-            liftPower /=max;
+            //liftPower2 /= max;
+            liftPower /= max;
             ManPower /= max;
             leftFrontPower  /= max;
             rightFrontPower /= max;
@@ -392,6 +397,7 @@ public class Robot{
 
         }
 
+        //lift2.setPower(liftPower2);
         lift.setPower(liftPower);
         klesh.setPosition(servo_position);
         man.setPower(ManPower);
@@ -401,6 +407,7 @@ public class Robot{
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         //telemetry.addData("manipulator", "%4.2f" , ManipulatorPower);
         telemetry.addData("l1", "$4.2f", liftPower);
+        //telemetry.addData("l2", "$4.2f", liftPower);
         telemetry.addData("servo", servo_position);
         telemetry.update();
     }

@@ -14,7 +14,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private Servo klesh = null;
     double axialm = 0;
     private DcMotor lift = null;
-    //Скорость лифта = 0.34545455 м\с
+    //Скорость лифта (с одной рейкой) = 0.34545455 м\с
+    //private DcMotor lift2 = null;
     private DcMotor man = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -26,6 +27,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
         klesh = hardwareMap.get(Servo.class, "kl");
         lift = hardwareMap.get(DcMotor.class, "l1");
+        //lift2 = hardwareMap.get(DcMotor.class, "l2");
         man = hardwareMap.get(DcMotor.class, "m");
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
@@ -34,6 +36,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
 
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        //lift2.setDirection(DcMotorSimple.Direction.FORWARD);
         man.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
