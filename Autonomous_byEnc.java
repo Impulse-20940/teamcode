@@ -60,11 +60,11 @@ public class Autonomous_byEnc extends LinearOpMode {
         waitForStart();
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         rightBackDrive.setTargetPosition(0);
         rightFrontDrive.setTargetPosition(0);
@@ -73,6 +73,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         //Simple parking
 
         //R.go_byenc_x(1470, 1);
-        R.turn(90, -1);
+        R.go_byenc_x(1000, 1);
+        R.go_byenc_y(1000, 1);
     }
 }
