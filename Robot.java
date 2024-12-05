@@ -229,12 +229,12 @@ public class Robot{
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            if (rightFrontDrive.getCurrentPosition() > rightBackDrive.getCurrentPosition()) {
+            if (enc2 > enc1) {
                 axial = 0;
                 lateral = 1;
                 yaw = 0;
             }
-            if (rightBackDrive.getCurrentPosition() > rightFrontDrive.getCurrentPosition()) {
+            if (enc1 > enc2) {
                 axial = 0;
                 lateral = -1;
                 yaw = 0;
