@@ -412,16 +412,12 @@ public class Robot{
 
         }
     }
-    public void turn(double angle, double dir){
+    public void turn(double angle){
         get_members();
-        if (dir < 0) {
-            angle *= -1;
-        }
         while (Math.abs(angle+7) > Math.abs(getTurnAngle())  && L.opModeIsActive()){
-            if (dir < 0){
+            if (angle < 0){
                 Er = (angle+6) - (getTurnAngle());
-            }
-            else if (dir > 0) {
+            } else if (angle > 0) {
                 Er = (angle-6) - (getTurnAngle());
             }
             double kp = 0.0012;
