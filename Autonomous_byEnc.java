@@ -70,9 +70,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightFrontDrive.setTargetPosition(0);
         runtime.reset();
         //***********Main code*************
-        //Simple parking
-
         //R.go_byenc_x(1470, 1);
-        R.go_byenc_x(1000, 1);
+        R.go_byenc_xy(1000, 0);
     }
 }
