@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,10 +21,11 @@ public class Robot{
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
-    //DcMotor lift2 = null;
+    DcMotor lift2 = null;
     DcMotor lift = null;
     DcMotor man = null;
-    Servo klesh;
+    Servo klesh = null;
+    Servo klesh1 = null;
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
@@ -40,6 +42,7 @@ public class Robot{
     double x_p_reg = 0;
     double y_p_reg = 0;
     double axialm = 0;
+    double kles = 0;
     double dom = 0;
     double axial = 0;
     double lateral = 0;
@@ -56,19 +59,22 @@ public class Robot{
     }
 
     public void get_members() { //и это!
-        //lift2 = hardwareMap.get(DcMotor.class, "l2");
+        lift2 = hardwareMap.get(DcMotor.class, "l2");
         lift = hardwareMap.get(DcMotor.class, "l1");
         man = hardwareMap.get(DcMotor.class, "m");
         klesh = hardwareMap.get(Servo.class, "kl");
+        klesh1 = hardwareMap.get(Servo.class, "kl1");
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        //lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift.setDirection(DcMotor.Direction.FORWARD);
+        lift2.setDirection(DcMotor.Direction.REVERSE);
         //manipulator.setDirection(DcMotorSimple.Direction.FORWARD);
         klesh.setDirection(Servo.Direction.FORWARD);
+        klesh1.setDirection(Servo.Direction.REVERSE);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -341,7 +347,8 @@ public class Robot{
         double max;
         //axiall это axial для реечного лифта
         //axialm это axial для манипулятора(качельки)
-        double axiall = gamepad2.left_stick_y+0.03;
+        double axiall = gamepad2.left_stick_y*0.8+0.03;
+        //double kles = gamepad2.right_stick_y;
         double rt = gamepad2.right_trigger;
         // Мега сигма код на его разработку ушла целая недел
         while (rt > 0.5) {
@@ -361,8 +368,9 @@ public class Robot{
         double axial = -gamepad1.left_stick_y*0.7;
         double lateral = gamepad1.left_stick_x*0.7;
         double yaw = -gamepad1.right_stick_x*0.7;
-        double servo_position = gamepad2.left_stick_y-0.5;
         axialm = -gamepad2.right_stick_y*0.4+0.05;
+
+
         /*
         double lt = gamepad2.left_trigger;
         while (lt > 0){
@@ -373,7 +381,9 @@ public class Robot{
         }
          */
         double liftPower = axiall;
-        //double liftPower2 = axiall;
+        double liftPower2 = axiall;
+        double kleshPower = kles;
+        double kleshPower2 = kles;
         double ManPower = axialm;
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
@@ -384,11 +394,16 @@ public class Robot{
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
         max = Math.max(max, Math.abs(ManPower));
-        //max = Math.max(max, Math.abs(liftPower2));
+        max = Math.max(max, Math.abs(liftPower2));
         max = Math.max(max, Math.abs(liftPower));
+        max = Math.max(max,Math.abs(kleshPower));
+        max = Math.max(max,Math.abs(kleshPower2));
+
         if (max > 1.0) {
-            //liftPower2 /= max;
+            liftPower2 /= max;
             liftPower /= max;
+            kleshPower /= max;
+            kleshPower2 /= max;
             ManPower /= max;
             leftFrontPower  /= max;
             rightFrontPower /= max;
@@ -397,9 +412,10 @@ public class Robot{
 
         }
 
-        //lift2.setPower(liftPower2);
+        lift2.setPower(liftPower2);
         lift.setPower(liftPower);
-        klesh.setPosition(servo_position);
+        klesh.setPosition(kleshPower);
+        klesh1.setPosition(kleshPower2);
         man.setPower(ManPower);
         setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
 
@@ -407,8 +423,9 @@ public class Robot{
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         //telemetry.addData("manipulator", "%4.2f" , ManipulatorPower);
         telemetry.addData("l1", "$4.2f", liftPower);
-        //telemetry.addData("l2", "$4.2f", liftPower);
-        telemetry.addData("servo", servo_position);
+        telemetry.addData("l2", "$4.2f", liftPower);
+        telemetry.addData("kl", kleshPower);
+        telemetry.addData("kl1", kleshPower2);
         telemetry.update();
     }
     double getTurnAngle() {

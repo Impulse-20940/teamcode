@@ -12,10 +12,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class BasicOmniOpMode_Linear extends LinearOpMode {
     //Манипулятор это качелька
     private Servo klesh = null;
+    private Servo klesh1 = null;
     double axialm = 0;
     private DcMotor lift = null;
     //Скорость лифта (с одной рейкой) = 0.34545455 м\с
-    //private DcMotor lift2 = null;
+    private DcMotor lift2 = null;
     private DcMotor man = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -26,8 +27,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         Robot R = new Robot();
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
         klesh = hardwareMap.get(Servo.class, "kl");
+        klesh1 = hardwareMap.get(Servo.class, "kl1");
         lift = hardwareMap.get(DcMotor.class, "l1");
-        //lift2 = hardwareMap.get(DcMotor.class, "l2");
+        lift2 = hardwareMap.get(DcMotor.class, "l2");
         man = hardwareMap.get(DcMotor.class, "m");
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
@@ -35,8 +37,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
 
-        lift.setDirection(DcMotorSimple.Direction.FORWARD);
-        //lift2.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift.setDirection(DcMotor.Direction.FORWARD);
+        lift2.setDirection(DcMotor.Direction.REVERSE);
+        klesh.setDirection(Servo.Direction.FORWARD);
+        klesh1.setDirection(Servo.Direction.REVERSE);
         man.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
