@@ -19,8 +19,10 @@ public class Robot{
     Orientation angles;
     Acceleration gravity;
     DcMotor lift = null;
+    DcMotor lift2 = null;
     DcMotor man = null;
     Servo klesh;
+    Servo klesh1;
     ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
@@ -37,12 +39,12 @@ public class Robot{
     double x_p_reg = 0;
     double y_p_reg = 0;
     double axialm = 0;
-    double dom = 0;
     double axial = 0;
     double lateral = 0;
     double yaw = 0;
     double Er_last = 0;
     double Er = 0;
+
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
         //НЕ ТРОГАТЬ!
         this.hardwareMap = hardwareMap;
@@ -54,17 +56,21 @@ public class Robot{
 
     public void get_members() { //и это!
         lift = hardwareMap.get(DcMotor.class, "l1");
+        lift2 = hardwareMap.get(DcMotor.class, "l2");
         man = hardwareMap.get(DcMotor.class, "m");
         klesh = hardwareMap.get(Servo.class, "kl");
+        klesh1 = hardwareMap.get(Servo.class, "kl1");
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        //lift.setDirection(DcMotorSimple.Direction.FORWARD);
-        //manipulator.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift.setDirection(DcMotor.Direction.FORWARD);
+        lift2.setDirection(DcMotor.Direction.REVERSE);
+        man.setDirection(DcMotor.Direction.FORWARD);
         klesh.setDirection(Servo.Direction.FORWARD);
+        klesh1.setDirection(Servo.Direction.REVERSE);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -338,61 +344,27 @@ public class Robot{
         get_members();
         init_enc_motors();
         reset_using_motors();
-        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < x) | (rightBackDrive.getCurrentPosition() < y)) {
-            double enc1 = rightBackDrive.getCurrentPosition();
-            double enc2 = Math.abs(rightFrontDrive.getCurrentPosition());
+        while ((rightFrontDrive.getCurrentPosition() < x) | (Math.abs(rightBackDrive.getCurrentPosition()) < y)) {
+            double enc1 = Math.abs(rightBackDrive.getCurrentPosition());
+            double enc2 = rightFrontDrive.getCurrentPosition();
             double kp = 0.0017;//here is coeff
-            double kd = 0.0007; //differential coefficient
+            //double kd = 0.0007; //differential coefficient
             double x_er  = x - enc1;
             double y_er = y - enc2;
             x_p_reg = x_er*kp;
             y_p_reg = y_er*kp;
-            double x_d_reg = (x_er - x_er_last)*kd;
-            double y_d_reg = (y_er - y_er_last)*kd;
-            double x_pd = x_p_reg + x_d_reg;
-            double y_pd = y_p_reg + y_d_reg;
+            //double x_d_reg = (x_er - x_er_last)*kd;
+            //double y_d_reg = (y_er - y_er_last)*kd;
+            //double x_pd = x_p_reg + x_d_reg;
+            //double y_pd = y_p_reg + y_d_reg;
             x_er_last = x_er;
             y_er_last = y_er;
 
-            axial = y_pd;
-            lateral = x_pd;
+            axial = y_p_reg;
+            lateral = x_p_reg;
             yaw = 0;
 
-            if (getTurnAngle() > 0.2){
-                while (getTurnAngle() > 0.2){
-                    axial = 0;
-                    lateral = 0;
-                    yaw = -1;
 
-                    double leftFrontPower = axial + lateral + yaw;
-                    double rightFrontPower = axial - lateral - yaw;
-                    double leftBackPower = axial - lateral + yaw;
-                    double rightBackPower = axial + lateral - yaw;
-
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower);
-                    rightBackDrive.setPower(rightBackPower);
-                }
-            }
-
-            if (getTurnAngle() < -0.2){
-                while (getTurnAngle() < -0.2) {
-                    axial = 0;
-                    lateral = 0;
-                    yaw = 1;
-
-                    double leftFrontPower = axial + lateral + yaw;
-                    double rightFrontPower = axial - lateral - yaw;
-                    double leftBackPower = axial - lateral + yaw;
-                    double rightBackPower = axial + lateral - yaw;
-
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower);
-                    rightBackDrive.setPower(rightBackPower);
-                }
-            }
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -404,10 +376,26 @@ public class Robot{
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
+            while (getTurnAngle() > 5 | getTurnAngle() < -5){
+                axial = 0;
+                lateral = 0;
+                yaw = getTurnAngle()*0.1;
+
+
+                leftFrontPower = axial + lateral + yaw;
+                rightFrontPower = axial - lateral - yaw;
+                leftBackPower = axial - lateral + yaw;
+                rightBackPower = axial + lateral - yaw;
+
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(leftBackPower);
+                rightBackDrive.setPower(rightBackPower);
+            }
 
             telemetry.addData("Now is", "%7d :%7d",
-                    rightFrontDrive.getCurrentPosition(),
-                    rightBackDrive.getCurrentPosition());
+                    Math.abs(rightBackDrive.getCurrentPosition()),
+                    rightFrontDrive.getCurrentPosition());
             telemetry.update();
 
         }
@@ -456,6 +444,8 @@ public class Robot{
         //axiall это axial для реечного лифта
         //axialm это axial для манипулятора(качельки)
         double axiall = gamepad2.left_stick_y+0.03;
+        double axiall2 = -gamepad2.left_stick_y-0.03;
+        axialm = -gamepad2.right_stick_y*0.4+0.05;
         double rt = gamepad2.right_trigger;
         // Мега сигма код на его разработку ушла целая недел
         while (rt > 0.5) {
@@ -472,11 +462,11 @@ public class Robot{
             rightBackDrive.setPower(rightBackPower);
 
         }
-        double axial = -gamepad1.left_stick_y*0.7;
-        double lateral = gamepad1.left_stick_x*0.7;
-        double yaw = -gamepad1.right_stick_x*0.7;
-        double servo_position = gamepad2.left_stick_y-0.5;
-        axialm = -gamepad2.right_stick_y*0.4+0.05;
+        double axial = -gamepad1.left_stick_y*0.9;
+        double lateral = gamepad1.left_stick_x*0.9;
+        double yaw = -gamepad1.right_stick_x*0.9;
+        double kl_position = gamepad2.left_trigger*0.5;
+        double kl1_position = gamepad2.left_trigger*0.5;
         /*
         double lt = gamepad2.left_trigger;
         while (lt > 0){
@@ -487,6 +477,7 @@ public class Robot{
         }
          */
         double liftPower = axiall;
+        double lift2Power = axiall2;
         double ManPower = axialm;
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
@@ -509,7 +500,9 @@ public class Robot{
         }
 
         lift.setPower(liftPower);
-        klesh.setPosition(servo_position);
+        lift2.setPower(lift2Power);
+        klesh.setPosition(kl_position);
+        klesh1.setPosition(kl1_position);
         man.setPower(ManPower);
         setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
 
@@ -517,7 +510,6 @@ public class Robot{
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         //telemetry.addData("manipulator", "%4.2f" , ManipulatorPower);
         telemetry.addData("l1", "$4.2f", liftPower);
-        telemetry.addData("servo", servo_position);
         telemetry.update();
     }
     double getTurnAngle() {
