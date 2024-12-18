@@ -463,10 +463,11 @@ public class Robot{
 
         }
         double axial = -gamepad1.left_stick_y*0.9;
+        double kles = gamepad2.right_stick_y*0.975;
         double lateral = gamepad1.left_stick_x*0.9;
         double yaw = -gamepad1.right_stick_x*0.9;
-        double kl_position = gamepad2.left_trigger*0.5;
-        double kl1_position = gamepad2.left_trigger*0.5;
+        //double kl_position = gamepad2.left_trigger*0.5;
+        //double kl1_position = gamepad2.left_trigger*0.5;
         /*
         double lt = gamepad2.left_trigger;
         while (lt > 0){
@@ -478,6 +479,8 @@ public class Robot{
          */
         double liftPower = axiall;
         double lift2Power = axiall2;
+        double kleshPower = kles;
+        double kleshPower2 = kles;
         double ManPower = axialm;
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
@@ -489,6 +492,8 @@ public class Robot{
         max = Math.max(max, Math.abs(rightBackPower));
         max = Math.max(max, Math.abs(ManPower));
         max = Math.max(max, Math.abs(liftPower));
+        max = Math.max(max, Math.abs(kleshPower));
+        max = Math.max(max, Math.abs(kleshPower2));
         if (max > 1.0) {
             liftPower /=max;
             ManPower /= max;
@@ -496,13 +501,15 @@ public class Robot{
             rightFrontPower /= max;
             leftBackPower   /= max;
             rightBackPower  /= max;
+            kleshPower /= max;
+            kleshPower2 /= max;
 
         }
 
         lift.setPower(liftPower);
         lift2.setPower(lift2Power);
-        klesh.setPosition(kl_position);
-        klesh1.setPosition(kl1_position);
+        klesh.setPosition(kleshPower);
+        klesh1.setPosition(kleshPower2);
         man.setPower(ManPower);
         setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
 
