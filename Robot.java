@@ -368,23 +368,8 @@ public class Robot{
         //axialm это axial для манипулятора(качельки)
         double axiall = gamepad2.left_stick_y+0.03;
         double axiall2 = -gamepad2.left_stick_y-0.03;
-        axialm = -gamepad2.right_stick_y*0.4+0.05;
+        axialm = -gamepad2.right_stick_y*0.35+0.05;
         double rt = gamepad2.right_trigger;
-        // Мега сигма код на его разработку ушла целая недел
-        while (rt > 0.5) {
-            double axial = -gamepad1.left_stick_y*0.25;
-            double lateral = gamepad1.left_stick_x*0.25;
-            double yaw = -gamepad1.right_stick_x*0.25;
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
-
-        }
         double axial = -gamepad1.left_stick_y*0.9;
         double kles = gamepad2.right_stick_y*0.975;
         double lateral = gamepad1.left_stick_x*0.9;
