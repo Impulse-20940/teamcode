@@ -205,56 +205,24 @@ public class Robot{
         get_members();
         init_enc_motors();
         reset_using_motors();
-        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < x) | (rightBackDrive.getCurrentPosition() < x)) {
-            double enc1 = rightBackDrive.getCurrentPosition();
-            double enc2 = Math.abs(rightFrontDrive.getCurrentPosition());
+        while (Math.abs(rightBackDrive.getCurrentPosition()) < x) {
+            double enc1 = Math.abs(rightBackDrive.getCurrentPosition());
             double kp = 0.0017;//here is coeff
+            double kt = 0.0007;
             //double kd = 0.007; //differential coefficient
-            double x_er = x*napr - (enc1*napr+enc2*napr)/2;
+            double x_er = x*napr - enc1*napr;
             x_p_reg = (x_er)*kp;
+            double getangle = getTurnAngle();
             //double x_er_d = x_er - x_er_last;
             //double x_d_reg = kd*x_er_d*(1/x_er);
             //double x_pd = x_p_reg + x_d_reg;
-            x_er_last = x_er;
+            //x_er_last = x_er;
+
             axial = 0;
             lateral = x_p_reg;
             //lateral = x_pd;
-            yaw = 0;
-            if (getTurnAngle() > 0.2){
-                while (getTurnAngle() > 0.2){
-                    axial = 0;
-                    lateral = 0;
-                    yaw = -1;
+            yaw = getangle*kt;
 
-                    double leftFrontPower = axial + lateral + yaw;
-                    double rightFrontPower = axial - lateral - yaw;
-                    double leftBackPower = axial - lateral + yaw;
-                    double rightBackPower = axial + lateral - yaw;
-
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower);
-                    rightBackDrive.setPower(rightBackPower);
-                }
-            }
-
-            if (getTurnAngle() < -0.2){
-                while (getTurnAngle() < -0.2) {
-                    axial = 0;
-                    lateral = 0;
-                    yaw = 1;
-
-                    double leftFrontPower = axial + lateral + yaw;
-                    double rightFrontPower = axial - lateral - yaw;
-                    double leftBackPower = axial - lateral + yaw;
-                    double rightBackPower = axial + lateral - yaw;
-
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower);
-                    rightBackDrive.setPower(rightBackPower);
-                }
-            }
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower = axial - lateral + yaw;
@@ -265,8 +233,14 @@ public class Robot{
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
+            telemetry.addData("Now is", "%7d :%7d",
+                    Math.abs(rightBackDrive.getCurrentPosition()),
+                    Math.abs(rightFrontDrive.getCurrentPosition()));
+            telemetry.addData("Angle is:", getangle);
+            telemetry.update();
 
         }
+        setMPower(0, 0, 0, 0);
     }
     public void go_byenc_y(double y, double napr) {
         get_members();
@@ -281,46 +255,11 @@ public class Robot{
             y_p_reg = (y_er)*kp;
             //double y_d_reg = (y_er - y_er_last)*kd;
             //double y_pd = y_p_reg + y_d_reg;
-            y_er_last = y_er;
+            //y_er_last = y_er;
+
             axial = y_p_reg;
             lateral = 0;
-            yaw = 0;
-
-            if (getTurnAngle() > 0.2){
-                while (getTurnAngle() > 0.2){
-                    axial = 0;
-                    lateral = 0;
-                    yaw = -1;
-
-                    double leftFrontPower = axial + lateral + yaw;
-                    double rightFrontPower = axial - lateral - yaw;
-                    double leftBackPower = axial - lateral + yaw;
-                    double rightBackPower = axial + lateral - yaw;
-
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower);
-                    rightBackDrive.setPower(rightBackPower);
-                }
-            }
-
-            if (getTurnAngle() < -0.2){
-                while (getTurnAngle() < -0.2) {
-                    axial = 0;
-                    lateral = 0;
-                    yaw = 1;
-
-                    double leftFrontPower = axial + lateral + yaw;
-                    double rightFrontPower = axial - lateral - yaw;
-                    double leftBackPower = axial - lateral + yaw;
-                    double rightBackPower = axial + lateral - yaw;
-
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower);
-                    rightBackDrive.setPower(rightBackPower);
-                }
-            }
+            yaw = getTurnAngle()*kp;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -362,7 +301,7 @@ public class Robot{
 
             axial = y_p_reg;
             lateral = x_p_reg;
-            yaw = 0;
+            yaw = getTurnAngle()*kp;
 
 
 
@@ -376,26 +315,10 @@ public class Robot{
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            while (getTurnAngle() > 5 | getTurnAngle() < -5){
-                axial = 0;
-                lateral = 0;
-                yaw = getTurnAngle()*0.1;
-
-
-                leftFrontPower = axial + lateral + yaw;
-                rightFrontPower = axial - lateral - yaw;
-                leftBackPower = axial - lateral + yaw;
-                rightBackPower = axial + lateral - yaw;
-
-                leftFrontDrive.setPower(leftFrontPower);
-                rightFrontDrive.setPower(rightFrontPower);
-                leftBackDrive.setPower(leftBackPower);
-                rightBackDrive.setPower(rightBackPower);
-            }
-
-            telemetry.addData("Now is", "%7d :%7d",
+            telemetry.addData("Now is", "%7d :%7d :%7d",
                     Math.abs(rightBackDrive.getCurrentPosition()),
-                    rightFrontDrive.getCurrentPosition());
+                    rightFrontDrive.getCurrentPosition(),
+            getTurnAngle());
             telemetry.update();
 
         }

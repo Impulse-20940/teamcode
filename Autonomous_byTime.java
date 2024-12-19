@@ -54,10 +54,7 @@ public class Autonomous_byTime extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
 
-        R.go_bytime(0, 0.5, 0, 3.0);
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);
+        R.go_bytime(0, -0.5, 0, 5);
+        R.go_bytime(0, 0.5, 0, 7);
     }
 }
