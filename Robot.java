@@ -260,7 +260,7 @@ public class Robot{
 
             axial = y_p_reg;
             lateral = 0;
-            yaw = getTurnAngle()*kp;
+            yaw = -getTurnAngle()*kp;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -302,7 +302,7 @@ public class Robot{
 
             axial = y_p_reg;
             lateral = x_p_reg;
-            yaw = getTurnAngle()*kp;
+            yaw = -getTurnAngle()*kp;
 
 
 
