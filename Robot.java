@@ -222,7 +222,7 @@ public class Robot{
             axial = 0;
             lateral = x_p_reg;
             //lateral = x_pd;
-            yaw = -getangle*kt;
+            yaw = getangle*kt;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -367,26 +367,15 @@ public class Robot{
         double max;
         //axiall это axial для реечного лифта
         //axialm это axial для манипулятора(качельки)
-        double axiall = gamepad2.left_stick_y+0.03;
-        double axiall2 = -gamepad2.left_stick_y-0.03;
         double rt2 = gamepad2.right_trigger;
+        double axiall = gamepad2.left_stick_y*(1-rt2)+0.03;
+        double axiall2 = -gamepad2.left_stick_y-0.03;
         axialm = -gamepad2.right_stick_y*0.37*(1-rt2)+0.07;
         double rt1 = gamepad1.right_trigger;
         double kles = gamepad2.left_trigger*0.975;
         double axial = -gamepad1.left_stick_y*(1 - rt1);
         double lateral = gamepad1.left_stick_x*(1 - rt1);
         double yaw = -gamepad1.right_stick_x*(1 - rt1);
-        //double kl_position = gamepad2.left_trigger*0.5;
-        //double kl1_position = gamepad2.left_trigger*0.5;
-        /*
-        double lt = gamepad2.left_trigger;
-        while (lt > 0){
-            axialm = -gamepad2.right_stick_y;
-            double axial   = -gamepad1.left_stick_y;
-            double lateral = gamepad1.left_stick_x;
-            double yaw = -gamepad1.right_stick_x;
-        }
-         */
         double liftPower = axiall;
         double lift2Power = axiall2;
         double kleshPower = kles;

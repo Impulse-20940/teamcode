@@ -75,8 +75,9 @@ public class Autonomous_byTime extends LinearOpMode {
 
         // Wait for the game to start (driver presses START)
         waitForStart();
-
-        R.go_bytime(0, -0.5, -R.getTurnAngle()*0.001, 5);
-        R.go_bytime(0, 0.5, -R.getTurnAngle()*0.001, 7);
+        R.go_bytime(-0.5, 0, 0, 0.5);
+        R.go_bytime(0, -0.5, -R.getTurnAngle()*0.001, 3);
+        sleep(2000);
+        R.go_bytime(0, 0.5, -R.getTurnAngle()*0.001, 6);
     }
 }
