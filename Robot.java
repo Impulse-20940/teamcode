@@ -369,7 +369,7 @@ public class Robot{
         //axialm это axial для манипулятора(качельки)
         double axiall = gamepad2.left_stick_y+0.03;
         double axiall2 = -gamepad2.left_stick_y-0.03;
-        axialm = -gamepad2.right_stick_y*0.35+0.05;
+        axialm = -gamepad2.right_stick_y*0.37+0.05;
         double rt = gamepad2.right_trigger;
         double kles = gamepad2.left_trigger*0.975;
         double axial = -gamepad1.left_stick_y*(1 - rt);
