@@ -25,6 +25,7 @@ public class Autonomous_byTime extends LinearOpMode {
     public void runOpMode() {
         Robot R = new Robot();
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+
         runtime.reset();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");

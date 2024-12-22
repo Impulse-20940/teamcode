@@ -46,6 +46,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        
         imu.initialize(parameters);
         while (!imu.isGyroCalibrated()) { //Калибровка акселерометра
             sleep(30);

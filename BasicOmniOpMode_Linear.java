@@ -20,7 +20,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor man = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
+    private DcMotor rightFrontDrive = null; 
     private DcMotor rightBackDrive = null;
 
     public void runOpMode() {
