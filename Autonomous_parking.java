@@ -30,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Autonomous_byTime")
+@Autonomous(name="Autonomous_parking")
 public class Autonomous_parking extends LinearOpMode {
     // Указываем 4 мотора
     ElapsedTime runtime = new ElapsedTime();
