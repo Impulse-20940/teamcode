@@ -373,9 +373,9 @@ public class Robot{
         axialm = -gamepad2.right_stick_y*0.37*(1-rt2)+0.07;
         double rt1 = gamepad1.right_trigger;
         double kles = gamepad2.left_trigger*0.975;
-        double axial = -gamepad1.left_stick_y*(1 - rt1);
-        double lateral = gamepad1.left_stick_x*(1 - rt1);
-        double yaw = -gamepad1.right_stick_x*(1 - rt1);
+        double axial = -gamepad1.left_stick_y*(1 - rt1*0.93);
+        double lateral = gamepad1.left_stick_x*(1 - rt1*0.93);
+        double yaw = -gamepad1.right_stick_x*(1 - rt1*0.93);
         double liftPower = axiall;
         double lift2Power = axiall2;
         double kleshPower = kles;
