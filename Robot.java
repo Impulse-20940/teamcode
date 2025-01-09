@@ -205,12 +205,13 @@ public class Robot{
         get_members();
         init_enc_motors();
         reset_using_motors();
-        while (Math.abs(rightBackDrive.getCurrentPosition()) < x) {
-            double enc1 = Math.abs(rightBackDrive.getCurrentPosition());
+        x *= napr;
+        while (rightBackDrive.getCurrentPosition() < x) {
+            double enc1 = rightBackDrive.getCurrentPosition();
             double kp = 0.0017;//here is coeff
             double kt = 0.0007;
             //double kd = 0.007; //differential coefficient
-            double x_er = x*napr - enc1*napr;
+            double x_er = x*napr - enc1;
             x_p_reg = (x_er)*kp;
             double getangle = getTurnAngle();
             //double x_er_d = x_er - x_er_last;
@@ -221,7 +222,7 @@ public class Robot{
             axial = 0;
             lateral = x_p_reg;
             //lateral = x_pd;
-            yaw = getangle*kt;
+            yaw = -getangle*kt;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -259,7 +260,7 @@ public class Robot{
 
             axial = y_p_reg;
             lateral = 0;
-            yaw = getTurnAngle()*kp;
+            yaw = -getTurnAngle()*kp;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -301,7 +302,7 @@ public class Robot{
 
             axial = y_p_reg;
             lateral = x_p_reg;
-            yaw = getTurnAngle()*kp;
+            yaw = -getTurnAngle()*kp;
 
 
 
@@ -368,27 +369,12 @@ public class Robot{
         //axialm это axial для манипулятора(качельки)
         double axiall = gamepad2.left_stick_y+0.03;
         double axiall2 = -gamepad2.left_stick_y-0.03;
-        axialm = -gamepad2.right_stick_y*0.4+0.05;
+        axialm = -gamepad2.right_stick_y*0.35+0.05;
         double rt = gamepad2.right_trigger;
-        // Мега сигма код на его разработку ушла целая недел
-        while (rt > 0.5) {
-            double axial = -gamepad1.left_stick_y*0.25;
-            double lateral = gamepad1.left_stick_x*0.25;
-            double yaw = -gamepad1.right_stick_x*0.25;
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
-
-        }
-        double axial = -gamepad1.left_stick_y*0.9;
-        double kles = gamepad2.right_stick_y*0.975;
-        double lateral = gamepad1.left_stick_x*0.9;
-        double yaw = -gamepad1.right_stick_x*0.9;
+        double kles = gamepad2.left_trigger*0.975;
+        double axial = -gamepad1.left_stick_y*(1 - rt);
+        double lateral = gamepad1.left_stick_x*(1 - rt);
+        double yaw = -gamepad1.right_stick_x*(1 - rt);
         //double kl_position = gamepad2.left_trigger*0.5;
         //double kl1_position = gamepad2.left_trigger*0.5;
         /*
