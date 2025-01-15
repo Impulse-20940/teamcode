@@ -76,10 +76,10 @@ public class Autonomous_byEnc extends LinearOpMode {
         //R.turn(90);
         while (opModeIsActive()){
             double x = -1000;
-            double enc1 = Math.abs(rightBackDrive.getCurrentPosition());
+            double enc1 = rightFrontDrive.getCurrentPosition();
             double kp = 0.0019;//here is coeff
             double kt = 0.0007;
-            double kd = 0.007; //differential coefficient
+            double kd = 0.0004; //differential coefficient
             double x_er = x - enc1;
             double x_p_reg = (x_er)*kp;
             double getangle = R.getTurnAngle();
