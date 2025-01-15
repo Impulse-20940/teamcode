@@ -367,10 +367,11 @@ public class Robot{
         double max;
         //axiall это axial для реечного лифта
         //axialm это axial для манипулятора(качельки)
-        double axiall = gamepad2.left_stick_y+0.03;
-        double axiall2 = -gamepad2.left_stick_y-0.03;
-        axialm = -gamepad2.right_stick_y*0.35+0.05;
-        double rt = gamepad2.right_trigger;
+        double rt1 = gamepad2.right_trigger;
+        double axiall = gamepad2.left_stick_y*0.8+0.03*(1 - rt1);
+        double axiall2 = -gamepad2.left_stick_y*0.8-0.03*(1 - rt1);
+        axialm = -gamepad2.right_stick_y*0.35+0.05*(1 - rt1);
+        double rt = gamepad1.right_trigger;
         double kles = gamepad2.left_trigger*0.975;
         double axial = -gamepad1.left_stick_y*(1 - rt);
         double lateral = gamepad1.left_stick_x*(1 - rt);

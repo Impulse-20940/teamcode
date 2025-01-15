@@ -21,6 +21,7 @@ public class Autonomous_byEnc extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
+    double x_er_last;
     @Override
     public void runOpMode() {
         Robot R = new Robot();
@@ -74,9 +75,22 @@ public class Autonomous_byEnc extends LinearOpMode {
         //R.go_byenc_xy(1000, 500);
         //R.turn(90);
         while (opModeIsActive()){
-            double axial = 0;
-            double lateral = 1;
-            double yaw = R.getTurnAngle()*0.01;
+            double x = -1000;
+            double enc1 = Math.abs(rightBackDrive.getCurrentPosition());
+            double kp = 0.0019;//here is coeff
+            double kt = 0.0007;
+            double kd = 0.007; //differential coefficient
+            double x_er = x - enc1;
+            double x_p_reg = (x_er)*kp;
+            double getangle = R.getTurnAngle();
+            double x_er_d = x_er - x_er_last;
+            double x_d_reg = kd*x_er_d*(1/x_er);
+            double x_pd = x_p_reg + x_d_reg;
+            x_er_last = x_er;
+
+            double axial = x_pd;
+            double lateral = 0;
+            double yaw = -getangle*kt;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -87,6 +101,12 @@ public class Autonomous_byEnc extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    Math.abs(rightBackDrive.getCurrentPosition()),
+                    Math.abs(rightFrontDrive.getCurrentPosition()));
+            telemetry.addData("Angle is:", getangle);
+            telemetry.update();
         }
     }
 }
