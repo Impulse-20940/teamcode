@@ -108,50 +108,25 @@ public class Robot{
         }
     }
 
-    public void go_byenc(double fb, double lr, double trn, double ticks) {
+    public void go_byenc(double x, double y) {
         get_members();
-        while ((Math.abs(rightFrontDrive.getCurrentPosition()) < ticks) | (rightBackDrive.getCurrentPosition() < ticks)) {
-            double axial = 0;
+        while ((-rightFrontDrive.getCurrentPosition() < x & rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
+            double enc1 = -rightFrontDrive.getCurrentPosition();
+            double enc2 = rightBackDrive.getCurrentPosition();
+            double kp = 0.0019;//here is coeff
+            double kt = 0.0007;
+            double kd = 0.0004; //differential coefficient
+            double x_er = x - enc1;
+            double x_p_reg = (x_er)*kp;
+            double getangle = getTurnAngle();
+            double x_er_d = x_er - x_er_last;
+            double x_d_reg = kd*x_er_d*(1/x_er);
+            double x_pd = x_p_reg + x_d_reg;
+            x_er_last = x_er;
+
+            double axial = x_pd;
             double lateral = 0;
-            double yaw = 0;
-            double enc1 = rightBackDrive.getCurrentPosition();
-            double enc2 = Math.abs(rightFrontDrive.getCurrentPosition());
-            double er = ticks-(enc1+enc2)/2;
-            double kp = 0.0027;//here is coeff
-            double p_reg = er*kp;
-
-            while (fb == 1) {
-                axial = p_reg;
-                lateral = 0;
-                yaw = 0;
-            }
-            while (fb == -1) {
-                axial = p_reg;
-                lateral = 0;
-                yaw = 0;
-            }
-            while (lr == 1) {
-                axial = 0;
-                lateral = p_reg;
-                yaw = 0;
-            }
-            while (lr == -1){
-                axial = 0;
-                lateral = p_reg;
-                yaw = 0;
-            }
-            while (trn == 1) {
-                axial = 0;
-                lateral = 0;
-                yaw = p_reg;
-            }
-            while (trn == -1){
-                axial = 0;
-                lateral = 0;
-                yaw = p_reg;
-            }
-
-
+            double yaw = -getangle*kt;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -163,41 +138,10 @@ public class Robot{
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            while ((Math.abs(rightFrontDrive.getCurrentPosition()) - rightBackDrive.getCurrentPosition()) > 100) {
-                while ((Math.abs(rightFrontDrive.getCurrentPosition()) - rightBackDrive.getCurrentPosition()) > 100) {
-                    axial = 0;
-                    lateral = 0;
-                    yaw = -0.5;
-                    leftFrontPower = axial + lateral + yaw;
-                    rightFrontPower = axial - lateral - yaw;
-                    leftBackPower = axial - lateral + yaw;
-                    rightBackPower = axial + lateral - yaw;
-
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower);
-                    rightBackDrive.setPower(rightBackPower);
-                }
-            }
-            while ((rightBackDrive.getCurrentPosition() - Math.abs(rightFrontDrive.getCurrentPosition())) > 100) {
-                while ((rightBackDrive.getCurrentPosition() - Math.abs(rightFrontDrive.getCurrentPosition())) > 100) {
-                    axial = 0;
-                    lateral = 0;
-                    yaw = 0.5;
-                    leftFrontPower = axial + lateral + yaw;
-                    rightFrontPower = axial - lateral - yaw;
-                    leftBackPower = axial - lateral + yaw;
-                    rightBackPower = axial + lateral - yaw;
-
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower);
-                    rightBackDrive.setPower(rightBackPower);
-                }
-            }
             telemetry.addData("Now is", "%7d :%7d",
-                    rightFrontDrive.getCurrentPosition(),
-                    rightBackDrive.getCurrentPosition());
+                    Math.abs(rightBackDrive.getCurrentPosition()),
+                    Math.abs(rightFrontDrive.getCurrentPosition()));
+            telemetry.addData("Angle is:", getangle);
             telemetry.update();
         }
     }
@@ -368,25 +312,19 @@ public class Robot{
         //axiall это axial для реечного лифта
         //axialm это axial для манипулятора(качельки)
         double rt1 = gamepad2.right_trigger;
-        double axiall = gamepad2.left_stick_y*0.5+0.03*(1 - rt1);
-        double axiall2 = -gamepad2.left_stick_y*0.5-0.03*(1 - rt1);
-        axialm = -gamepad2.right_stick_y*0.35+0.05*(1 - rt1);
-        double rt = gamepad1.right_trigger;
+        double axiall = gamepad2.left_stick_y*(1 - rt1)+0.03;
+        double axiall2 = -gamepad2.left_stick_y*(1 - rt1)-0.03;
+        axialm = -gamepad2.right_stick_y*(1 - rt1)+0.05;
         double kles = gamepad2.left_trigger*0.975;
+
+        //rt - считывание правого триггера
+        double rt = gamepad1.right_trigger;
+        //умножение на rt используется для уменьшения напряжения, подаваемого на моторы
         double axial = -gamepad1.left_stick_y*(1 - rt);
         double lateral = gamepad1.left_stick_x*(1 - rt);
         double yaw = -gamepad1.right_stick_x*(1 - rt);
-        //double kl_position = gamepad2.left_trigger*0.5;
-        //double kl1_position = gamepad2.left_trigger*0.5;
-        /*
-        double lt = gamepad2.left_trigger;
-        while (lt > 0){
-            axialm = -gamepad2.right_stick_y;
-            double axial   = -gamepad1.left_stick_y;
-            double lateral = gamepad1.left_stick_x;
-            double yaw = -gamepad1.right_stick_x;
-        }
-         */
+
+        //переменные с напряжением, которое будет подаваться на моторы
         double liftPower = axiall;
         double lift2Power = axiall2;
         double kleshPower = kles;
@@ -396,26 +334,18 @@ public class Robot{
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
-
+        //балансировка напряжения моторов
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
-        max = Math.max(max, Math.abs(ManPower));
-        max = Math.max(max, Math.abs(liftPower));
-        max = Math.max(max, Math.abs(kleshPower));
-        max = Math.max(max, Math.abs(kleshPower2));
+
         if (max > 1.0) {
-            liftPower /=max;
-            ManPower /= max;
             leftFrontPower  /= max;
             rightFrontPower /= max;
             leftBackPower   /= max;
             rightBackPower  /= max;
-            kleshPower /= max;
-            kleshPower2 /= max;
-
         }
-
+        //подача напряжения на моторы
         lift.setPower(liftPower);
         lift2.setPower(lift2Power);
         klesh.setPosition(kleshPower);
