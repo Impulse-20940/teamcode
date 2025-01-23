@@ -5,11 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TeleOp_newDev")
+@TeleOp(name="TeleOp_lift1")
 
-public class BasicOmniOpMode_Linear extends LinearOpMode {
+public class BasicOmniOpMode_Lift1 extends LinearOpMode {
     //Манипулятор это качелька
     private Servo klesh = null;
     private Servo klesh1 = null;
@@ -57,6 +56,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            R.teleop();
+            R.teleop_lift1();
         }
     }}

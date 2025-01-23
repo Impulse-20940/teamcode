@@ -145,6 +145,7 @@ public class Robot{
             telemetry.update();
         }
     }
+    /*
     public void go_byenc_x(double x, double napr) {
         get_members();
         init_enc_motors();
@@ -224,50 +225,7 @@ public class Robot{
 
         }
     }
-    public void go_byenc_xy(double x, double y){
-        get_members();
-        init_enc_motors();
-        reset_using_motors();
-        while ((rightFrontDrive.getCurrentPosition() < x) | (Math.abs(rightBackDrive.getCurrentPosition()) < y)) {
-            double enc1 = Math.abs(rightBackDrive.getCurrentPosition());
-            double enc2 = rightFrontDrive.getCurrentPosition();
-            double kp = 0.0017;//here is coeff
-            //double kd = 0.0007; //differential coefficient
-            double x_er  = x - enc1;
-            double y_er = y - enc2;
-            x_p_reg = x_er*kp;
-            y_p_reg = y_er*kp;
-            //double x_d_reg = (x_er - x_er_last)*kd;
-            //double y_d_reg = (y_er - y_er_last)*kd;
-            //double x_pd = x_p_reg + x_d_reg;
-            //double y_pd = y_p_reg + y_d_reg;
-            x_er_last = x_er;
-            y_er_last = y_er;
-
-            axial = y_p_reg;
-            lateral = x_p_reg;
-            yaw = -getTurnAngle()*kp;
-
-
-
-            double leftFrontPower = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower = axial - lateral + yaw;
-            double rightBackPower = axial + lateral - yaw;
-
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
-
-            telemetry.addData("Now is", "%7d :%7d :%7d",
-                    Math.abs(rightBackDrive.getCurrentPosition()),
-                    rightFrontDrive.getCurrentPosition(),
-            getTurnAngle());
-            telemetry.update();
-
-        }
-    }
+     */
     public void turn(double angle){
         get_members();
         while (Math.abs(angle+7) > Math.abs(getTurnAngle())  && L.opModeIsActive()){
@@ -306,7 +264,7 @@ public class Robot{
         rightBackDrive.setPower(rightBackPower);
     }
 
-    public void teleop() {
+    public void teleop_lift1() {
         get_members();
         double max;
         //axiall это axial для реечного лифта
