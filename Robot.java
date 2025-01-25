@@ -317,6 +317,59 @@ public class Robot{
         telemetry.addData("l1", "$4.2f", liftPower);
         telemetry.update();
     }
+    public void teleop_lift2() {
+        get_members();
+        double max;
+        //axiall это axial для реечного лифта
+        //axialm это axial для манипулятора(качельки)
+        double rt1 = gamepad2.right_trigger;
+        double axiall = gamepad2.left_stick_y*(1 - rt1)+0.03;
+        double axiall2 = -gamepad2.left_stick_y*(1 - rt1)-0.03;
+        axialm = -gamepad2.right_stick_y*(1 - rt1)+0.05;
+        double kles = gamepad2.left_trigger*0.975;
+
+        //rt - считывание правого триггера
+        double rt = gamepad1.right_trigger;
+        //умножение на rt используется для уменьшения напряжения, подаваемого на моторы
+        double axial = -gamepad1.left_stick_y*(1 - rt);
+        double lateral = gamepad1.left_stick_x*(1 - rt);
+        double yaw = -gamepad1.right_stick_x*(1 - rt);
+
+        //переменные с напряжением, которое будет подаваться на моторы
+        double liftPower = axiall;
+        double lift2Power = axiall2;
+        double kleshPower = kles;
+        double kleshPower2 = kles;
+        double ManPower = axialm;
+        double leftFrontPower  = axial + lateral + yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double leftBackPower   = axial - lateral + yaw;
+        double rightBackPower  = axial + lateral - yaw;
+        //балансировка напряжения моторов
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower  /= max;
+            rightFrontPower /= max;
+            leftBackPower   /= max;
+            rightBackPower  /= max;
+        }
+        //подача напряжения на моторы
+        lift.setPower(liftPower);
+        lift2.setPower(lift2Power);
+        klesh.setPosition(kleshPower);
+        klesh1.setPosition(kleshPower2);
+        man.setPower(ManPower);
+        setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+
+        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+        //telemetry.addData("manipulator", "%4.2f" , ManipulatorPower);
+        telemetry.addData("l1", "$4.2f", liftPower);
+        telemetry.update();
+    }
     double getTurnAngle() {
         get_members();
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
