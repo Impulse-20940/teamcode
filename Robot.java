@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Robot{
+    //инициализация всех переменных
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
@@ -47,6 +48,7 @@ public class Robot{
 
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
         //НЕ ТРОГАТЬ!
+        //инициализация классов
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.gamepad1 = gamepad1;
@@ -54,7 +56,8 @@ public class Robot{
         this.L = L;
     }
 
-    public void get_members() { //и это!
+    public void get_members() {//и это!
+        //инициализация всех используемых устройств
         lift = hardwareMap.get(DcMotor.class, "l1");
         lift2 = hardwareMap.get(DcMotor.class, "l2");
         man = hardwareMap.get(DcMotor.class, "m");
@@ -78,6 +81,7 @@ public class Robot{
 
     }
     public void init_enc_motors() {
+        //инициализация моторов, используемых энкодер
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -87,10 +91,12 @@ public class Robot{
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void reset_using_motors() {
+        //сброс моторов
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     public void go_bytime(double axial, double lateral, double yaw, double time) {
+        //езда по времени
         get_members();
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
@@ -109,6 +115,7 @@ public class Robot{
     }
 
     public void go_byenc(double x, double y) {
+        //езда по энкодеру
         get_members();
         while ((-rightFrontDrive.getCurrentPosition() < x & rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
             double enc1 = -rightFrontDrive.getCurrentPosition();
@@ -227,6 +234,7 @@ public class Robot{
     }
      */
     public void turn(double angle){
+        //функция поворота по гироскопу
         get_members();
         while (Math.abs(angle+7) > Math.abs(getTurnAngle())  && L.opModeIsActive()){
             if (angle < 0){
@@ -320,16 +328,14 @@ public class Robot{
     public void teleop_lift2() {
         get_members();
         double max;
-        //axiall это axial для реечного лифта
-        //axialm это axial для манипулятора(качельки)
-        double rt1 = gamepad2.right_trigger;
-        double axiall = gamepad2.left_stick_y*(1 - rt1)+0.03;
-        double axiall2 = -gamepad2.left_stick_y*(1 - rt1)-0.03;
-        axialm = -gamepad2.right_stick_y*(1 - rt1)+0.05;
-        double kles = gamepad2.left_trigger*0.975;
+        double rt1 = gamepad2.right_trigger; //правый триггер для захватов и подъемов
+        double axiall = gamepad2.left_stick_y*(1 - rt1)+0.03; //мотор 1 лифта
+        double axiall2 = -gamepad2.left_stick_y*(1 - rt1)-0.03; //мотор 2 лифта
+        //axialm = -gamepad2.right_stick_y*(1 - rt1)+0.05;
+        double kles = gamepad2.left_trigger*0.975; //клешня
 
         //rt - считывание правого триггера
-        double rt = gamepad1.right_trigger;
+        double rt = gamepad1.right_trigger; //правый триггер для кб
         //умножение на rt используется для уменьшения напряжения, подаваемого на моторы
         double axial = -gamepad1.left_stick_y*(1 - rt);
         double lateral = gamepad1.left_stick_x*(1 - rt);
@@ -339,8 +345,8 @@ public class Robot{
         double liftPower = axiall;
         double lift2Power = axiall2;
         double kleshPower = kles;
-        double kleshPower2 = kles;
-        double ManPower = axialm;
+        //double kleshPower2 = kles;
+        //double ManPower = axialm;
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
@@ -360,8 +366,8 @@ public class Robot{
         lift.setPower(liftPower);
         lift2.setPower(lift2Power);
         klesh.setPosition(kleshPower);
-        klesh1.setPosition(kleshPower2);
-        man.setPower(ManPower);
+        //klesh1.setPosition(kleshPower2);
+        //man.setPower(ManPower);
         setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
 
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
@@ -371,12 +377,14 @@ public class Robot{
         telemetry.update();
     }
     double getTurnAngle() {
+        //получить текущий угол поворота
         get_members();
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         gravity  = imu.getGravity();
         return angles.firstAngle;
     }
     void setMPower(double rb,double rf,double lf,double lb){
+        //подача напряжения на моторы
         get_members();//Устоновить мощность на моторы
         rightFrontDrive.setPower(rf);
         leftFrontDrive.setPower(lf);

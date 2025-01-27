@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="TeleOp_lift1")
+@TeleOp(name="TeleOp_lift2")
 
 public class BasicOmniOpMode_Lift2 extends LinearOpMode {
     //Манипулятор это качелька
