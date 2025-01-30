@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -125,14 +124,21 @@ public class Robot{
             double kd = 0.0004; //differential coefficient
             double x_er = x - enc1;
             double x_p_reg = (x_er)*kp;
+            double y_er = y - enc2;
+            double y_p_reg = (y_er)*kp;
             double getangle = getTurnAngle();
             double x_er_d = x_er - x_er_last;
             double x_d_reg = kd*x_er_d*(1/x_er);
             double x_pd = x_p_reg + x_d_reg;
             x_er_last = x_er;
 
-            double axial = x_pd;
-            double lateral = 0;
+            double y_er_d = y_er - y_er_last;
+            double y_d_reg = kd*y_er_d*(1/y_er);
+            double y_pd = y_p_reg + y_d_reg;
+            y_er_last = x_er;
+
+            double axial = y_pd;
+            double lateral = x_pd;
             double yaw = -getangle*kt;
 
             double leftFrontPower = axial + lateral + yaw;
