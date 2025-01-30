@@ -342,7 +342,7 @@ public class Robot{
 
         //rt - считывание правого триггера
         double rt = gamepad1.right_trigger; //правый триггер для кб
-        //умножение на rt используется для уменьшения напряжения, подаваемого на моторы
+        //умножение на rt используется для уменьшения напряжения, подаваемого на моторы в зависимости от силы нажатия правого триггера
         double axial = -gamepad1.left_stick_y*(1 - rt);
         double lateral = gamepad1.left_stick_x*(1 - rt);
         double yaw = -gamepad1.right_stick_x*(1 - rt);
