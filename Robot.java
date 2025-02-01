@@ -44,7 +44,8 @@ public class Robot{
     double yaw = 0;
     double Er_last = 0;
     double Er = 0;
-
+    boolean open_close;
+    double kles1;
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
         //НЕ ТРОГАТЬ!
         //инициализация классов
@@ -81,8 +82,6 @@ public class Robot{
     }
     public void init_enc_motors() {
         //инициализация моторов, используемых энкодер
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -189,7 +188,7 @@ public class Robot{
             init_enc_motors();
             reset_using_motors();
             double enc1 = -rightFrontDrive.getCurrentPosition();
-            double kp = 0.0009;//here is coeff
+            double kp = 0.00075;//here is coeff
             double kt = 0.005;
             //double kd = 0.0004; //differential coefficient
             double x_er = x - enc1;
@@ -356,14 +355,26 @@ public class Robot{
     public void teleop_lift2() {
         get_members();
         double max;
+        boolean block = gamepad2.right_bumper;
         double rt1 = gamepad2.right_trigger; //правый триггер для захватов и подъемов
         double axiall = gamepad2.left_stick_y*(1 - rt1)+0.03; //мотор 1 лифта
         double axiall2 = -gamepad2.right_stick_y*(1 - rt1)-0.03; //мотор 2 лифта
         //axialm = -gamepad2.right_stick_y*(1 - rt1)+0.05;
         double kles = gamepad2.left_trigger*0.975; //клешня
-
         //rt - считывание правого триггера
         double rt = gamepad1.right_trigger; //правый триггер для кб
+        if (block){
+            if (open_close){
+                kles1 = 90;
+                open_close = false;
+                delay(210);
+            }
+            else{
+                kles1 = 0;
+                open_close = true;
+                delay(210);
+            }
+        }
         //умножение на rt используется для уменьшения напряжения, подаваемого на моторы в зависимости от силы нажатия правого триггера
         double axial = -gamepad1.left_stick_y*(1 - rt);
         double lateral = gamepad1.left_stick_x*(1 - rt);
@@ -373,7 +384,7 @@ public class Robot{
         double liftPower = axiall;
         double lift2Power = axiall2;
         double kleshPower = kles;
-        //double kleshPower2 = kles;
+        double kleshPower2 = kles1;
         //double ManPower = axialm;
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
@@ -394,7 +405,7 @@ public class Robot{
         lift.setPower(liftPower);
         lift2.setPower(lift2Power);
         klesh.setPosition(kleshPower);
-        //klesh1.setPosition(kleshPower2);
+        klesh1.setPosition(kleshPower2);
         //man.setPower(ManPower);
         setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
 
@@ -418,5 +429,12 @@ public class Robot{
         leftFrontDrive.setPower(lf);
         rightBackDrive.setPower(rb);
         leftBackDrive.setPower(lb);
+    }
+    void delay(long millis){
+        try{
+            Thread.sleep(millis);
+        } catch (InterruptedException ex){
+            Thread.currentThread().interrupt();
+        }
     }
 }
