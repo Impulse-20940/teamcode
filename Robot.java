@@ -357,15 +357,15 @@ public class Robot{
         double max;
         boolean block = gamepad2.right_bumper;
         double rt1 = gamepad2.right_trigger; //правый триггер для захватов и подъемов
-        double axiall = gamepad2.left_stick_y*(1 - rt1)+0.03; //мотор 1 лифта
-        double axiall2 = -gamepad2.right_stick_y*(1 - rt1)-0.03; //мотор 2 лифта
+        double axiall = gamepad2.left_stick_y*((1 - rt1)*0.75)+0.03; //мотор 1 лифта
+        double axiall2 = -gamepad2.right_stick_y*((1 - rt1)*0.75)-0.03; //мотор 2 лифта
         //axialm = -gamepad2.right_stick_y*(1 - rt1)+0.05;
-        double kles = gamepad2.left_trigger*0.975; //клешня
+        double kles = gamepad2.left_trigger*0.99; //клешня
         //rt - считывание правого триггера
         double rt = gamepad1.right_trigger; //правый триггер для кб
         if (block){
             if (open_close){
-                kles1 = 90;
+                kles1 = 0.8;
                 open_close = false;
                 delay(210);
             }
