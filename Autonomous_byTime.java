@@ -73,6 +73,6 @@ public class Autonomous_byTime extends LinearOpMode {
         waitForStart();
 
         R.go_bytime(0, -0.5, 5);
-        R.go_bytime(0, 0.5,  7);
+        R.go_bytime(0, 0.5,  11);
     }
 }
