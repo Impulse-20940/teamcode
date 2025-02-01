@@ -34,16 +34,16 @@ public class Robot{
     Gamepad gamepad2;
     LinearOpMode L;
 
-    double x_er_last = 0;
-    double y_er_last = 0;
-    double x_p_reg = 0;
-    double y_p_reg = 0;
-    double axialm = 0;
-    double axial = 0;
-    double lateral = 0;
-    double yaw = 0;
-    double Er_last = 0;
-    double Er = 0;
+    double x_er_last;
+    double y_er_last;
+    double x_p_reg;
+    double y_p_reg;
+    double axialm;
+    double axial;
+    double lateral;
+    double yaw;
+    double Er_last;
+    double Er;
     boolean open_close;
     double kles1;
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
