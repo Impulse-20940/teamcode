@@ -363,6 +363,10 @@ public class Robot{
         double kles = gamepad2.left_trigger*0.99; //клешня
         //rt - считывание правого триггера
         double rt = gamepad1.right_trigger; //правый триггер для кб
+        boolean x1 = gamepad1.x;
+        boolean b1 = gamepad1.b;
+        boolean rb1 = gamepad1.right_bumper;
+        boolean lb1 = gamepad1.left_bumper;
         if (block){
             if (open_close){
                 kles1 = 0.8;
@@ -380,6 +384,38 @@ public class Robot{
         double lateral = gamepad1.left_stick_x*(1 - rt);
         double yaw = gamepad1.right_stick_x*(1 - rt);
 
+        if(x1){
+            yaw = -0.2;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+        }
+        if(b1){
+            yaw = 0.2;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+        }
+        if(rb1){
+            lateral = 0.2;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+        }
+        if(lb1){
+            lateral = -0.2;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+        }
         //переменные с напряжением, которое будет подаваться на моторы
         double liftPower = axiall;
         double lift2Power = axiall2;
