@@ -84,7 +84,6 @@ public class Robot{
         //инициализация моторов, используемых энкодер
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -114,32 +113,32 @@ public class Robot{
         }
     }
     public void go_byenc_simple(double axial, double lateral, double rast) {
-        //езда по времени
         get_members();
         init_enc_motors();
         reset_using_motors();
-        double getangle = getTurnAngle();
-        yaw = -getangle*0.005;
-        double leftFrontPower  = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
+        while (L.opModeIsActive() && (-rightFrontDrive.getCurrentPosition() < rast) && (rightBackDrive.getCurrentPosition() < rast)) {
+            //езда по времени
+            double getangle = getTurnAngle();
+            yaw = -getangle*0.005;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
 
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
-        runtime.reset();
-        while (L.opModeIsActive() && (-rightFrontDrive.getCurrentPosition() < rast)) {
-            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+            runtime.reset();
         }
     }
 
     public void go_byenc(double x, double y) {
         //езда по энкодеру
         get_members();
-        while ((-rightFrontDrive.getCurrentPosition() < x & rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
+        init_enc_motors();
+        reset_using_motors();
+        while ((-rightFrontDrive.getCurrentPosition() < x && rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
             double enc1 = -rightFrontDrive.getCurrentPosition();
             double enc2 = rightBackDrive.getCurrentPosition();
             double kp = 0.0019;//here is coeff
@@ -153,16 +152,18 @@ public class Robot{
             double x_er_d = x_er - x_er_last;
             double x_d_reg = kd*x_er_d*(1/x_er);
             double x_pd = x_p_reg + x_d_reg;
-            x_er_last = x_er;
 
             double y_er_d = y_er - y_er_last;
             double y_d_reg = kd*y_er_d*(1/y_er);
             double y_pd = y_p_reg + y_d_reg;
-            y_er_last = x_er;
+
 
             double axial = y_pd;
             double lateral = x_pd;
             double yaw = -getangle*kt;
+
+            x_er_last = x_er;
+            y_er_last = y_er;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -182,11 +183,11 @@ public class Robot{
         }
     }
     public void go_byenc_x(double x, double napr) {
+        get_members();
+        init_enc_motors();
+        reset_using_motors();
         while (L.opModeIsActive() && (-rightFrontDrive.getCurrentPosition() < x)) {
             //езда по энкодеру
-            get_members();
-            init_enc_motors();
-            reset_using_motors();
             double enc1 = -rightFrontDrive.getCurrentPosition();
             double kp = 0.00075;//here is coeff
             double kt = 0.005;
@@ -284,19 +285,7 @@ public class Robot{
 
     public void stop_system(){
         get_members();
-        double axial = 0;
-        double lateral = 0;
-        double yaw = 0;
-
-        double leftFrontPower = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower = axial - lateral + yaw;
-        double rightBackPower = axial + lateral - yaw;
-
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        setMPower(0, 0,0, 0);
     }
 
     public void teleop_lift1() {

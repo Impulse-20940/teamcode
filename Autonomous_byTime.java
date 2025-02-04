@@ -50,9 +50,9 @@ public class Autonomous_byTime extends LinearOpMode {
 
         // Wait for the game to start (driver presses START)
         waitForStart();
-        //R.delay(12000);
-        R.go_bytime(0, -0.5, 8);
-        R.go_bytime(-0.5, 0, 2);
-        R.go_bytime(0, 0.5,  11);
+        //R.delay(10000);
+        R.go_bytime(0, -0.7, 4);
+        R.go_bytime(-0.7, 0, 2);
+        R.go_bytime(0, 0.7,  11);
     }
 }
