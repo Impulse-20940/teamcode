@@ -112,13 +112,103 @@ public class Robot{
             telemetry.update();
         }
     }
-    public void go_byenc_simple(double axial, double lateral, double rast) {
+    public void go_byenc_rtp_x(double position, double napr){
         get_members();
-        init_enc_motors();
-        reset_using_motors();
-        while (L.opModeIsActive() && (-rightFrontDrive.getCurrentPosition() < rast) && (rightBackDrive.getCurrentPosition() < rast)) {
+        int fr_tg = -rightFrontDrive.getCurrentPosition() - (int)position;
+        int bk_tg = rightBackDrive.getCurrentPosition() + (int)position;
+        rightFrontDrive.setTargetPosition(fr_tg);
+        rightBackDrive.setTargetPosition(bk_tg);
+
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (L.opModeIsActive() &&
+                (rightBackDrive.isBusy() && rightFrontDrive.isBusy())) {
+            double enc2 = rightBackDrive.getCurrentPosition();
+            double kp = 0.0007;//here is coeff
+            double kt = 0.0007;
+            double kd = 0.00109; //differential coefficient
+            double x_er = position - enc2;
+            double x_p_reg = (x_er)*kp;
+            double getangle = getTurnAngle();
+            double x_er_d = x_er - y_er_last;
+            double x_d_reg = kd*x_er_d*(1/x_er);
+            double x_pd = x_p_reg + x_d_reg;
+            x_er_last = x_er;
+
+            double axial = 0;
+            double lateral = x_pd;
+            double yaw = -getangle*kt;
+
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+        }
+        setMPower(0, 0, 0, 0);
+        // Turn off RUN_TO_POSITION
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        L.sleep(250);
+    }
+    public void go_byenc_rtp_y(double position, double napr){
+        get_members();
+        int fr_tg = -rightFrontDrive.getCurrentPosition() - (int)position;
+        int bk_tg = rightBackDrive.getCurrentPosition() + (int)position;
+        rightFrontDrive.setTargetPosition(fr_tg);
+        rightBackDrive.setTargetPosition(bk_tg);
+
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (L.opModeIsActive() &&
+                (rightBackDrive.isBusy() && rightFrontDrive.isBusy())) {
+            double enc2 = rightBackDrive.getCurrentPosition();
+            double kp = 0.0019;//here is coeff
+            double kt = 0.0007;
+            double kd = 0.0004; //differential coefficient
+            double x_er = position - enc2;
+            double x_p_reg = (x_er)*kp;
+            double getangle = getTurnAngle();
+            double x_er_d = x_er - y_er_last;
+            double x_d_reg = kd*x_er_d*(1/x_er);
+            double x_pd = x_p_reg + x_d_reg;
+            x_er_last = x_er;
+
+            double axial = x_pd;
+            double lateral = 0;
+            double yaw = -getangle*kt;
+
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+        }
+        setMPower(0, 0, 0, 0);
+        // Turn off RUN_TO_POSITION
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        L.sleep(250);
+    }
+    public void go_byenc_simple(double a, double l, double rast) {
+        get_members();
+        //rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + (int)a);
+        //rightFrontDrive.setTargetPosition(-rightFrontDrive.getCurrentPosition() + (int)-l);
+        while (L.opModeIsActive() && ((-rightFrontDrive.getCurrentPosition() < rast) | (rightBackDrive.getCurrentPosition() < rast))) {
             //езда по времени
             double getangle = getTurnAngle();
+            double axial = a;
+            double lateral = l;
             yaw = -getangle*0.005;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -129,15 +219,17 @@ public class Robot{
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-            runtime.reset();
+
+            telemetry.addData("Now is", "%7d :%7d",
+                    Math.abs(rightBackDrive.getCurrentPosition()),
+                    Math.abs(rightFrontDrive.getCurrentPosition()));
+            telemetry.addData("Angle is:", getangle);
+            telemetry.update();
         }
     }
-
     public void go_byenc(double x, double y) {
         //езда по энкодеру
         get_members();
-        init_enc_motors();
-        reset_using_motors();
         while ((-rightFrontDrive.getCurrentPosition() < x && rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
             double enc1 = -rightFrontDrive.getCurrentPosition();
             double enc2 = rightBackDrive.getCurrentPosition();
@@ -184,7 +276,6 @@ public class Robot{
     }
     public void go_byenc_x(double x, double napr) {
         get_members();
-        init_enc_motors();
         reset_using_motors();
         while (L.opModeIsActive() && (-rightFrontDrive.getCurrentPosition() < x)) {
             //езда по энкодеру
@@ -225,7 +316,6 @@ public class Robot{
     public void go_byenc_y(double y) {
         //езда по энкодеру
         get_members();
-        init_enc_motors();
         reset_using_motors();
         while ((rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
             double enc2 = rightBackDrive.getCurrentPosition();

@@ -56,9 +56,6 @@ public class Autonomous_byEnc extends LinearOpMode {
         telemetry.addData("Done!", "Calibrated"); //Сообщение об окончании калибровки
         telemetry.update();
 
-
-        // Wait for the game to start (driver presses START)
-        waitForStart();
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -66,14 +63,14 @@ public class Autonomous_byEnc extends LinearOpMode {
 
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setTargetPosition(0);
-        rightFrontDrive.setTargetPosition(0);
         runtime.reset();
+        // Wait for the game to start (driver presses START)
+        waitForStart();
         //***********Main code*************
         //R.go_byenc_x(1470, 1);
         //R.go_byenc_xy(1000, 500);
         //R.turn(90);
-        R.go_byenc_simple(0, -0.5, -1348);
-        R.go_byenc_simple(0, 0.5, 2760);
+        R.go_byenc_rtp_x(-1348, -1);
+        R.go_byenc_rtp_x(27600, 1);
     }
 }
