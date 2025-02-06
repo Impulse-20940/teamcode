@@ -112,7 +112,7 @@ public class Robot{
             telemetry.update();
         }
     }
-    public void go_byenc_rtp_x(double position, double napr){
+    public void go_byenc_rtp_x(double position){
         get_members();
         int fr_tg = -rightFrontDrive.getCurrentPosition() - (int)position;
         int bk_tg = rightBackDrive.getCurrentPosition() + (int)position;
@@ -125,19 +125,18 @@ public class Robot{
                 (rightBackDrive.isBusy() && rightFrontDrive.isBusy())) {
             double enc2 = rightBackDrive.getCurrentPosition();
             double kp = 0.0007;//here is coeff
-            double kt = 0.0007;
             double kd = 0.00109; //differential coefficient
             double x_er = position - enc2;
             double x_p_reg = (x_er)*kp;
             double getangle = getTurnAngle();
-            double x_er_d = x_er - y_er_last;
+            double x_er_d = x_er - x_er_last;
             double x_d_reg = kd*x_er_d*(1/x_er);
             double x_pd = x_p_reg + x_d_reg;
             x_er_last = x_er;
 
             double axial = 0;
             double lateral = x_pd;
-            double yaw = -getangle*kt;
+            double yaw = -getangle*0.005;
 
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -156,9 +155,9 @@ public class Robot{
 
         L.sleep(250);
     }
-    public void go_byenc_rtp_y(double position, double napr){
+    void go_byenc_rtp_y(double position){
         get_members();
-        int fr_tg = -rightFrontDrive.getCurrentPosition() - (int)position;
+        int fr_tg = rightFrontDrive.getCurrentPosition() + (int)position;
         int bk_tg = rightBackDrive.getCurrentPosition() + (int)position;
         rightFrontDrive.setTargetPosition(fr_tg);
         rightBackDrive.setTargetPosition(bk_tg);
@@ -167,21 +166,23 @@ public class Robot{
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while (L.opModeIsActive() &&
                 (rightBackDrive.isBusy() && rightFrontDrive.isBusy())) {
+            /*
             double enc2 = rightBackDrive.getCurrentPosition();
-            double kp = 0.0019;//here is coeff
+            double kp = 0.0007;//here is coeff
             double kt = 0.0007;
-            double kd = 0.0004; //differential coefficient
+            double kd = 0.00109; //differential coefficient
             double x_er = position - enc2;
             double x_p_reg = (x_er)*kp;
-            double getangle = getTurnAngle();
-            double x_er_d = x_er - y_er_last;
+            double x_er_d = x_er - x_er_last;
             double x_d_reg = kd*x_er_d*(1/x_er);
             double x_pd = x_p_reg + x_d_reg;
             x_er_last = x_er;
+             */
+            double getangle = getTurnAngle();
 
-            double axial = x_pd;
+            double axial = 0.5*(position/Math.abs(position));
             double lateral = 0;
-            double yaw = -getangle*kt;
+            double yaw = -getangle*0.005;
 
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -204,7 +205,8 @@ public class Robot{
         get_members();
         //rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + (int)a);
         //rightFrontDrive.setTargetPosition(-rightFrontDrive.getCurrentPosition() + (int)-l);
-        while (L.opModeIsActive() && ((-rightFrontDrive.getCurrentPosition() < rast) | (rightBackDrive.getCurrentPosition() < rast))) {
+        reset_using_motors();
+        while (L.opModeIsActive() && ((rightFrontDrive.getCurrentPosition() < rast) | (-rightBackDrive.getCurrentPosition() < rast))) {
             //езда по времени
             double getangle = getTurnAngle();
             double axial = a;
@@ -221,8 +223,8 @@ public class Robot{
             rightBackDrive.setPower(rightBackPower);
 
             telemetry.addData("Now is", "%7d :%7d",
-                    Math.abs(rightBackDrive.getCurrentPosition()),
-                    Math.abs(rightFrontDrive.getCurrentPosition()));
+                    rightBackDrive.getCurrentPosition(),
+                    rightFrontDrive.getCurrentPosition());
             telemetry.addData("Angle is:", getangle);
             telemetry.update();
         }
@@ -462,8 +464,11 @@ public class Robot{
         double axial = -gamepad1.left_stick_y*(1 - rt);
         double lateral = gamepad1.left_stick_x*(1 - rt);
         double yaw = gamepad1.right_stick_x*(1 - rt);
-
-        if(x1){
+        boolean up = gamepad1.dpad_up;
+        boolean down = gamepad1.dpad_down;
+        boolean left = gamepad1.dpad_left;
+        boolean right = gamepad1.dpad_right;
+        if(lb1){
             yaw = -0.2;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -471,7 +476,7 @@ public class Robot{
             double rightBackPower  = axial + lateral - yaw;
             setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
         }
-        if(b1){
+        if(rb1){
             yaw = 0.2;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -479,7 +484,7 @@ public class Robot{
             double rightBackPower  = axial + lateral - yaw;
             setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
         }
-        if(rb1){
+        if(right){
             lateral = 0.2;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -487,8 +492,24 @@ public class Robot{
             double rightBackPower  = axial + lateral - yaw;
             setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
         }
-        if(lb1){
+        if(left){
             lateral = -0.2;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+        }
+        if(up){
+            axial = 0.2;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+        }
+        if(down){
+            axial = -0.2;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;

@@ -70,7 +70,8 @@ public class Autonomous_byEnc extends LinearOpMode {
         //R.go_byenc_x(1470, 1);
         //R.go_byenc_xy(1000, 500);
         //R.turn(90);
-        R.go_byenc_rtp_x(-1348, -1);
-        R.go_byenc_rtp_x(27600, 1);
+        //R.go_byenc_rtp_x(-7234);
+        R.go_byenc_rtp_y(-1000);
+        //R.go_byenc_rtp_x(14468);
     }
 }
