@@ -232,9 +232,13 @@ public class Robot{
     public void go_byenc(double x, double y) {
         //езда по энкодеру
         get_members();
+        reset_using_motors();
+        init_enc_motors();
         while ((-rightFrontDrive.getCurrentPosition() < x && rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
             double enc1 = -rightFrontDrive.getCurrentPosition();
             double enc2 = rightBackDrive.getCurrentPosition();
+            //double kp = 0.0007;//here is coeff
+            //double kd = 0.00109;
             double kp = 0.0019;//here is coeff
             double kt = 0.00049;
             double kd = 0.00039; //differential coefficient
