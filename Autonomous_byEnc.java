@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.programs.Robot;
 
 @Autonomous(name="Autonomous_byEnc")
 public class Autonomous_byEnc extends LinearOpMode {
@@ -40,7 +41,7 @@ public class Autonomous_byEnc extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         //*****************************************
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters(); //Акселерометра
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "SensorBNO055IMUCalibration.json";

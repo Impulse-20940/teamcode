@@ -112,95 +112,6 @@ public class Robot{
             telemetry.update();
         }
     }
-    public void go_byenc_rtp_x(double position){
-        get_members();
-        int fr_tg = -rightFrontDrive.getCurrentPosition() - (int)position;
-        int bk_tg = rightBackDrive.getCurrentPosition() + (int)position;
-        rightFrontDrive.setTargetPosition(fr_tg);
-        rightBackDrive.setTargetPosition(bk_tg);
-
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (L.opModeIsActive() &&
-                (rightBackDrive.isBusy() && rightFrontDrive.isBusy())) {
-            double enc2 = rightBackDrive.getCurrentPosition();
-            double kp = 0.0007;//here is coeff
-            double kd = 0.00109; //differential coefficient
-            double x_er = position - enc2;
-            double x_p_reg = (x_er)*kp;
-            double getangle = getTurnAngle();
-            double x_er_d = x_er - x_er_last;
-            double x_d_reg = kd*x_er_d*(1/x_er);
-            double x_pd = x_p_reg + x_d_reg;
-            x_er_last = x_er;
-
-            double axial = 0;
-            double lateral = x_pd;
-            double yaw = -getangle*0.005;
-
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
-        }
-        setMPower(0, 0, 0, 0);
-        // Turn off RUN_TO_POSITION
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        L.sleep(250);
-    }
-    void go_byenc_rtp_y(double position){
-        get_members();
-        int fr_tg = rightFrontDrive.getCurrentPosition() + (int)position;
-        int bk_tg = rightBackDrive.getCurrentPosition() + (int)position;
-        rightFrontDrive.setTargetPosition(fr_tg);
-        rightBackDrive.setTargetPosition(bk_tg);
-
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (L.opModeIsActive() &&
-                (rightBackDrive.isBusy() && rightFrontDrive.isBusy())) {
-            /*
-            double enc2 = rightBackDrive.getCurrentPosition();
-            double kp = 0.0007;//here is coeff
-            double kt = 0.0007;
-            double kd = 0.00109; //differential coefficient
-            double x_er = position - enc2;
-            double x_p_reg = (x_er)*kp;
-            double x_er_d = x_er - x_er_last;
-            double x_d_reg = kd*x_er_d*(1/x_er);
-            double x_pd = x_p_reg + x_d_reg;
-            x_er_last = x_er;
-             */
-            double getangle = getTurnAngle();
-
-            double axial = 0.5*(position/Math.abs(position));
-            double lateral = 0;
-            double yaw = -getangle*0.005;
-
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
-        }
-        setMPower(0, 0, 0, 0);
-        // Turn off RUN_TO_POSITION
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        L.sleep(250);
-    }
     public void go_byenc_simple(double a, double l, double rast) {
         get_members();
         //rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + (int)a);
@@ -442,14 +353,12 @@ public class Robot{
         double max;
         boolean block = gamepad2.right_bumper;
         double rt1 = gamepad2.right_trigger; //правый триггер для захватов и подъемов
-        double axiall = gamepad2.left_stick_y*((1 - rt1)*0.75)+0.03; //мотор 1 лифта
-        double axiall2 = -gamepad2.right_stick_y*((1 - rt1)*0.75)-0.03; //мотор 2 лифта
+        double axiall = gamepad2.left_stick_y*((1 - rt1)*0.75)+0.03; //мотор качельки
+        double axiall2 = -gamepad2.right_stick_y*((1 - rt1)*0.75)-0.03; //мотор лифта
         //axialm = -gamepad2.right_stick_y*(1 - rt1)+0.05;
         double kles = gamepad2.left_trigger*0.99; //клешня
         //rt - считывание правого триггера
         double rt = gamepad1.right_trigger; //правый триггер для кб
-        boolean x1 = gamepad1.x;
-        boolean b1 = gamepad1.b;
         boolean rb1 = gamepad1.right_bumper;
         boolean lb1 = gamepad1.left_bumper;
         if (block){
