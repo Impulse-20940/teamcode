@@ -361,11 +361,14 @@ public class Robot{
         double rt = gamepad1.right_trigger; //правый триггер для кб
         boolean rb1 = gamepad1.right_bumper;
         boolean lb1 = gamepad1.left_bumper;
+        boolean up1 = gamepad2.dpad_up;
+        boolean down1 = gamepad2.dpad_down;
         if (block){
             if (open_close){
                 kles1 = 0.8;
                 open_close = false;
                 delay(210);
+                klesh1.close();
             }
             else{
                 kles1 = 0;
@@ -423,6 +426,22 @@ public class Robot{
         }
         if(down){
             axial = -0.2;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+        }
+        if(down1){
+            axiall2 = -0.2;
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+        }
+        if(up1){
+            axial = 0.25;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
