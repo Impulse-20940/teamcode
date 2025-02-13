@@ -90,10 +90,25 @@ public class Autotomous_specimen extends LinearOpMode {
             telemetry.update();
         }
         klesh1.close();
-        R.go_byenc(0, 3000);
         lift.setPower(-0.9);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1)) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        R.go_byenc(0, 3000);
+        R.delay(1000);
+        lift2.setPower(0.9);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        R.delay(1000)
+        lift.setPower(0.4);
+        lift2.setPower(0.4);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 3)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
