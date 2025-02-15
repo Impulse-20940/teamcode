@@ -51,6 +51,6 @@ public class Autonomous_parking extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
         R.go_bytime(-0.5, 0, 1);
-        R.go_bytime(0, 0.7, 3.7);
+        R.go_bytime(0, -0.7, 3.7);
     }
 }

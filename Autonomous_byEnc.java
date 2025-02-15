@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.programs.Robot;
 
 @Autonomous(name="Autonomous_byEnc")
 public class Autonomous_byEnc extends LinearOpMode {
@@ -67,8 +66,8 @@ public class Autonomous_byEnc extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
         //***********Main code*************
-        R.go_byenc(-7000, 0);
-        R.go_byenc(0, -1000);
-        R.go_byenc(14500, 0);
+        R.go_byenc_x(7000);
+        R.go_byenc_y(-1000);
+        R.go_byenc_x(-14000);
     }
 }
