@@ -83,7 +83,7 @@ public class Autotomous_specimen extends LinearOpMode {
         //***********Main code*************
         R.get_members();
         klesh1.setPosition(0);
-        lift.setPower(0.8);
+        lift.setPower(0.3);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
@@ -91,7 +91,7 @@ public class Autotomous_specimen extends LinearOpMode {
         }
         lift.setPower(0);
         klesh1.close();
-        lift.setPower(-0.9);
+        lift.setPower(-0.3);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
@@ -100,5 +100,12 @@ public class Autotomous_specimen extends LinearOpMode {
         lift.setPower(0);
         R.delay(500);
         R.go_byenc(0, 3000);
+        lift.setPower(-0.3);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.1)) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        lift.setPower(0);
     }
 }
