@@ -59,4 +59,5 @@ public class BasicOmniOpMode_Lift2 extends LinearOpMode {
         while (opModeIsActive()) {
             R.teleop_lift2();
         }
-    }}
+    }
+}
