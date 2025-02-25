@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+@Autonomous(name="Autonomous_specimen")
 public class Autotomous_specimen extends LinearOpMode {
     BNO055IMU imu;
     DcMotor lift = null;
@@ -19,7 +20,6 @@ public class Autotomous_specimen extends LinearOpMode {
     DcMotor leftBackDrive = null;
     DcMotor rightFrontDrive = null;
     DcMotor rightBackDrive = null;
-
     double x_er_last;
     @Override
     public void runOpMode() {
@@ -78,33 +78,29 @@ public class Autotomous_specimen extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
         //***********Main code*************
-        R.get_members();
         klesh1.setPosition(0);
-        lift.setPower(0.3);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1)) {
-            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        lift.setPower(0);
-        klesh1.close();
-        lift.setPower(-0.3);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1)) {
-            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        lift.setPower(0);
         R.delay(500);
-        lift2.setPower(0.3);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.3)) {
-            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
+        lift2.setPower(-0.45);
+        R.delay(1000);
         lift2.setPower(0);
         R.delay(500);
-        R.go_byenc(0, 3000);
-
+        klesh1.setPosition(0.8);
+        R.delay(500);
+        klesh1.close();
+        lift2.setPower(0.55);
+        R.delay(1000);
+        lift2.setPower(0);
+        R.delay(500);
+        lift.setPower(0.55);
+        R.delay(1000);
+        lift2.setPower(0);
+        R.delay(1000);
+        lift.setPower(0.5);
+        R.delay(1800);
+        lift.setPower(0);
+        R.delay(1800);
+        lift.setPower(-0.5);
+        R.delay(1800);
+        lift.setPower(0);
     }
 }

@@ -45,6 +45,7 @@ public class Robot{
     double Er_last;
     double Er;
     boolean open_close;
+    boolean ic;
     double kles1;
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
         //НЕ ТРОГАТЬ!
@@ -151,7 +152,7 @@ public class Robot{
             //double kp = 0.0007;//here is coeff
             //double kd = 0.00109;
             double kp = 0.0019;//here is coeff
-            double kt = 0.00049;
+            double kt = 0.02;
             double kd = 0.0039; //differential coefficient
 
             double x_er = x - enc1;
@@ -170,9 +171,9 @@ public class Robot{
             double y_pd = y_p_reg + y_d_reg;
 
 
-            double axial = -y_pd;
-            double lateral = -x_pd;
-            double yaw = -getangle*kt;
+            double axial = y_pd;
+            double lateral = -getangle*kt;
+            double yaw = x_pd;
 
             x_er_last = x_er;
             y_er_last = y_er;
@@ -201,9 +202,9 @@ public class Robot{
         while (L.opModeIsActive() && (-rightFrontDrive.getCurrentPosition() < x)) {
             //езда по энкодеру
             double enc1 = -rightFrontDrive.getCurrentPosition();
-            double kp = 0.0019;//here is coeff
+            double kp = 0.0006;//here is coeff
             double kt = 0.00049;
-            //double kd = 0.0004; //differential coefficient
+            //double kd =  0.0004; //differential coefficient
             double x_er = x - enc1;
             double x_p_reg = x_er*kp;
             double getangle = getTurnAngle();
@@ -238,10 +239,11 @@ public class Robot{
         //езда по энкодеру
         get_members();
         reset_using_motors();
+        init_enc_motors();
         while ((rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
             double enc2 = rightBackDrive.getCurrentPosition();
             double kp = 0.0019;//here is coeff
-            double kt = 0.00049;
+            double kt = 0.0046;
             //double kd = 0.0004; //differential coefficient
             double y_er = y - enc2;
             double y_p_reg = (y_er)*kp;
@@ -355,7 +357,7 @@ public class Robot{
     public void teleop_lift2() {
         get_members();
         double max;
-        boolean block = gamepad2.right_bumper;
+        boolean iscontrol;
         double rt1 = gamepad2.right_trigger; //правый триггер для захватов и подъемов
         double axiall = gamepad2.left_stick_y*((1 - rt1)*0.75)+0.03; //мотор качельки
         double axiall2 = -gamepad2.right_stick_y*((1 - rt1)*0.75)-0.03; //мотор лифта
@@ -363,10 +365,12 @@ public class Robot{
         double kles = gamepad2.left_trigger*0.99; //клешня
         //rt - считывание правого триггера
         double rt = gamepad1.right_trigger; //правый триггер для кб
+        boolean block = gamepad2.right_bumper;
         boolean rb1 = gamepad1.right_bumper;
         boolean lb1 = gamepad1.left_bumper;
         boolean up1 = gamepad2.dpad_up;
         boolean down1 = gamepad2.dpad_down;
+        boolean control = gamepad1.x;
         if (block){
             if (open_close){
                 kles1 = 0.8;
@@ -380,17 +384,35 @@ public class Robot{
                 delay(210);
             }
         }
+        if(control){
+            if(ic){
+                ic = false;
+                delay(250);
+            }
+            else{
+                ic = true;
+                delay(250);
+            }
+        }
+        if (ic){
+            axial = -gamepad1.left_stick_y*(1 - rt);
+            yaw = -gamepad1.left_stick_x*(1 - rt);
+            lateral = -getTurnAngle()*0.012;
+        }
+        else{
+            axial = -gamepad1.left_stick_y*(1 - rt);
+            yaw = -gamepad1.left_stick_x*(1 - rt);
+            lateral = -gamepad1.right_stick_x*(1 - rt);
+        }
         //умножение на rt используется для уменьшения напряжения, подаваемого на моторы в зависимости от силы нажатия правого триггера
-        double axial = -gamepad1.left_stick_y*(1 - rt);
-        double lateral = -gamepad1.left_stick_x*(1 - rt);
-        double yaw = -gamepad1.right_stick_x*(1 - rt);
+
 
         boolean up = gamepad1.dpad_up;
         boolean down = gamepad1.dpad_down;
         boolean left = gamepad1.dpad_left;
         boolean right = gamepad1.dpad_right;
         if(lb1){
-            yaw = 0.2;
+            lateral = 0.2;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -398,7 +420,7 @@ public class Robot{
             setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
         }
         if(rb1){
-            yaw = -0.2;
+            lateral = -0.2;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -406,7 +428,7 @@ public class Robot{
             setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
         }
         if(right){
-            lateral = -0.25;
+            yaw = -0.25;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -414,7 +436,7 @@ public class Robot{
             setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
         }
         if(left){
-            lateral = 0.25;
+            yaw = 0.25;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -459,11 +481,11 @@ public class Robot{
         double kleshPower = kles;
         double kleshPower2 = kles1;
         //double ManPower = axialm;
-        double leftFrontPower  = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
         //балансировка напряжения моторов
+        double leftFrontPower = axial + lateral + yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double leftBackPower = axial - lateral + yaw;
+        double rightBackPower = axial + lateral - yaw;
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
@@ -480,13 +502,22 @@ public class Robot{
         klesh.setPosition(kleshPower);
         klesh1.setPosition(kleshPower2);
         //man.setPower(ManPower);
-        setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
+
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(-leftBackPower);
+        rightBackDrive.setPower(-rightBackPower);
 
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         //telemetry.addData("manipulator", "%4.2f" , ManipulatorPower);
         telemetry.addData("l1", "$4.2f", liftPower);
         telemetry.update();
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
     double getTurnAngle() {
         //получить текущий угол поворота

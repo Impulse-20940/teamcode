@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,10 +23,11 @@ public class BasicOmniOpMode_Lift2 extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-
+    BNO055IMU imu;
     public void runOpMode() {
         Robot R = new Robot();
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         klesh = hardwareMap.get(Servo.class, "kl");
         klesh1 = hardwareMap.get(Servo.class, "kl1");
         lift = hardwareMap.get(DcMotor.class, "l1");
@@ -51,6 +54,21 @@ public class BasicOmniOpMode_Lift2 extends LinearOpMode {
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters(); //Акселерометра
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "SensorBNO055IMUCalibration.json";
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
+        while (!imu.isGyroCalibrated()) { //Калибровка акселерометра
+            sleep(30);
+            telemetry.addData("Wait", "Calibration"); //Сообщение о калибровке
+            telemetry.update();
+        }
+        telemetry.addData("Done!", "Calibrated"); //Сообщение об окончании калибровки
+        telemetry.update();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
