@@ -214,8 +214,8 @@ public class Robot{
             //x_er_last = x_er;;
 
             double axial = 0;
-            double lateral = x_p_reg;
-            double yaw = -getangle*kt;
+            double lateral = -getangle*kt;
+            double yaw = x_p_reg;
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -240,10 +240,10 @@ public class Robot{
         get_members();
         reset_using_motors();
         init_enc_motors();
-        while ((rightBackDrive.getCurrentPosition() < y) | L.opModeIsActive()){
-            double enc2 = rightBackDrive.getCurrentPosition();
-            double kp = 0.0019;//here is coeff
-            double kt = 0.0046;
+        while ((-rightFrontDrive.getCurrentPosition() < y) && L.opModeIsActive()){
+            double enc2 = -rightFrontDrive.getCurrentPosition();
+            double kp = 0.0009;//here is coeff
+            double kt = 0.012;
             //double kd = 0.0004; //differential coefficient
             double y_er = y - enc2;
             double y_p_reg = (y_er)*kp;
@@ -254,8 +254,8 @@ public class Robot{
             //y_er_last = y_er;
 
             double axial = y_p_reg;
-            double lateral = 0;
-            double yaw = -getangle*kt;
+            double lateral = -getangle*kt;
+            double yaw = 0;
 
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -264,12 +264,11 @@ public class Robot{
 
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(-rightBackPower);
 
-            telemetry.addData("Now is", "%7d :%7d",
-                    Math.abs(rightBackDrive.getCurrentPosition()),
-                    Math.abs(rightFrontDrive.getCurrentPosition()));
+            telemetry.addData("Now is", "%7d",
+                    -rightFrontDrive.getCurrentPosition());
             telemetry.addData("Angle is:", getangle);
             telemetry.update();
         }
@@ -497,8 +496,8 @@ public class Robot{
             rightBackPower  /= max;
         }
         //подача напряжения на моторы
-        lift.setPower(liftPower);
-        lift2.setPower(lift2Power);
+        lift.setPower(lift2Power);
+        lift2.setPower(liftPower);
         klesh.setPosition(kleshPower);
         klesh1.setPosition(kleshPower2);
         //man.setPower(ManPower);
@@ -540,5 +539,23 @@ public class Robot{
         } catch (InterruptedException ex){
             Thread.currentThread().interrupt();
         }
+    }
+    void k_up(double power, long time){
+        get_members();
+        lift2.setPower(power);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        delay(time);
+        lift2.setPower(0);
+        lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    void lift_up(double power, long time){
+        get_members();
+        lift.setPower(power);
+        lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        delay(time);
+        lift.setPower(0);
+        lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }
