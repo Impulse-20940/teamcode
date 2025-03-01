@@ -241,10 +241,10 @@ public class Robot{
         get_members();
         reset_using_motors();
         init_enc_motors();
-        while ((-rightFrontDrive.getCurrentPosition() < y) && L.opModeIsActive()){
+        while ((Math.abs(-rightFrontDrive.getCurrentPosition()) < Math.abs(y)) && L.opModeIsActive()){
             double enc2 = -rightFrontDrive.getCurrentPosition();
-            double kp = 0.005;//here is coeff
-            double kt = 0.013;
+            double kp = 0.004;//here is coeff
+            double kt = 0.012;
             //double kd = 0.0004; //differential coefficient
             double y_er = y - enc2;
             double y_p_reg = y_er*kp;
@@ -306,7 +306,24 @@ public class Robot{
             telemetry.update();
         }
     }
+    public void stable(){
+        get_members();
+        while ((getTurnAngle() > 3) | (getTurnAngle() < -3)){
+            double axial = 0;
+            double lateral = -getTurnAngle()*0.012;
+            double yaw = 0;
 
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(-rightBackPower);
+        }
+    }
     public void stop_system(){
         get_members();
         setMPower(0, 0,0, 0);

@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
 @Autonomous(name="Autonomous_byEnc")
 public class Autonomous_byEnc extends LinearOpMode {
     ElapsedTime runtime = new ElapsedTime();
