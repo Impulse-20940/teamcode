@@ -122,8 +122,9 @@ public class Robot{
             //езда по времени
             double getangle = getTurnAngle();
             double axial = a;
-            double lateral = l;
-            yaw = -getangle*0.005;
+            double lateral = -getangle*0.012;
+            yaw = l;
+
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -131,8 +132,8 @@ public class Robot{
 
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(-rightBackPower);
 
             telemetry.addData("Now is", "%7d :%7d",
                     rightBackDrive.getCurrentPosition(),
@@ -242,11 +243,11 @@ public class Robot{
         init_enc_motors();
         while ((-rightFrontDrive.getCurrentPosition() < y) && L.opModeIsActive()){
             double enc2 = -rightFrontDrive.getCurrentPosition();
-            double kp = 0.0009;//here is coeff
-            double kt = 0.012;
+            double kp = 0.005;//here is coeff
+            double kt = 0.013;
             //double kd = 0.0004; //differential coefficient
             double y_er = y - enc2;
-            double y_p_reg = (y_er)*kp;
+            double y_p_reg = y_er*kp;
             double getangle = getTurnAngle();
             //double y_er_d = y_er - y_er_last;
             //double y_d_reg = kd*y_er_d*(1/y_er);
@@ -271,7 +272,18 @@ public class Robot{
                     -rightFrontDrive.getCurrentPosition());
             telemetry.addData("Angle is:", getangle);
             telemetry.update();
+
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void turn(double angle){
         //функция поворота по гироскопу

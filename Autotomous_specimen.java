@@ -78,7 +78,7 @@ public class Autotomous_specimen extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
         //***********Main code*************
-        /*
+        klesh.setPosition(0);
         klesh1.setPosition(0);
         R.delay(500);
         R.k_up(-0.45, 1000);
@@ -90,11 +90,11 @@ public class Autotomous_specimen extends LinearOpMode {
         R.delay(500);
         R.lift_up(0.5, 1800);
         R.delay(500);
-        R.go_byenc_y(3000);
+        R.go_byenc_y(730);
         //R.k_up(-0.5, 500);
         R.delay(500);
         R.lift_up(-0.5, 1800);
-         */
-        R.go_byenc_y(30);
+        klesh.setPosition(1);
+        R.go_byenc_y(-700);
     }
 }
