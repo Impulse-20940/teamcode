@@ -73,9 +73,11 @@ public class BasicOmniOpMode_Lift2 extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        klesh1.setPosition(0.8);
+        klesh1.setPosition(0);
         while (opModeIsActive()) {
             R.teleop_lift2();
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
     }
 }

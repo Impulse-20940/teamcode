@@ -86,20 +86,20 @@ public class Autotomous_specimen extends LinearOpMode {
         klesh1.setPosition(1);
         R.delay(500);
         klesh1.close();
-        R.k_up(0.55, 1000);
+        R.k_up(0.55, 1100);
         R.delay(500);
-        R.lift_up(0.5, 1800);
+        R.lift_up(0.5, 1400);
         R.delay(500);
-        R.go_byenc_y(1002);
-        R.setMPower(0, 0, 0, 0);
-        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        R.go_byenc_y(1025);
         //R.k_up(-0.5, 500);
         R.delay(3000);
-        R.lift_up(-0.5, 1800);
+        R.lift_up(-0.5, 150);
+        R.k_up(-0.55, 450);
+        R.lift_up(-0.55, 1800);
         R.delay(500);
         klesh.setPosition(0.9);
+        R.delay(500);
+        R.go_byenc_y(-1000);
+        R.go_byenc_x(-5000);
     }
 }

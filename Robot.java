@@ -44,8 +44,9 @@ public class Robot{
     double yaw;
     double Er_last;
     double Er;
-    boolean open_close;
+    boolean open_close = true;
     boolean ic;
+    boolean ic180;
     double kles1;
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
         //НЕ ТРОГАТЬ!
@@ -200,11 +201,11 @@ public class Robot{
         get_members();
         reset_using_motors();
         init_enc_motors();
-        while (L.opModeIsActive() && (-rightFrontDrive.getCurrentPosition() < x)) {
+        while (L.opModeIsActive() && (Math.abs(-rightFrontDrive.getCurrentPosition()) < Math.abs(x))) {
             //езда по энкодеру
             double enc1 = -rightFrontDrive.getCurrentPosition();
-            double kp = 0.0006;//here is coeff
-            double kt = 0.00049;
+            double kp = 0.0039;//here is coeff
+            double kt = 0.012;
             //double kd =  0.0004; //differential coefficient
             double x_er = x - enc1;
             double x_p_reg = x_er*kp;
@@ -218,15 +219,15 @@ public class Robot{
             double lateral = -getangle*kt;
             double yaw = x_p_reg;
 
-            double leftFrontPower = axial + lateral + yaw;
+            double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower = axial - lateral + yaw;
-            double rightBackPower = axial + lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
 
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(-rightBackPower);
 
             telemetry.addData("Now is", "%7d :%7d",
                     rightBackDrive.getCurrentPosition(),
@@ -243,7 +244,7 @@ public class Robot{
         init_enc_motors();
         while ((Math.abs(-rightFrontDrive.getCurrentPosition()) < Math.abs(y)) && L.opModeIsActive()){
             double enc2 = -rightFrontDrive.getCurrentPosition();
-            double kp = 0.004;//here is coeff
+            double kp = 0.0039;//here is coeff
             double kt = 0.012;
             //double kd = 0.0004; //differential coefficient
             double y_er = y - enc2;
@@ -280,6 +281,7 @@ public class Robot{
             rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        setMPower(0, 0, 0, 0);
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -387,8 +389,8 @@ public class Robot{
         double max;
         boolean iscontrol;
         double rt1 = gamepad2.right_trigger; //правый триггер для захватов и подъемов
-        double axiall = gamepad2.left_stick_y*((1 - rt1)*0.75)+0.03; //мотор качельки
-        double axiall2 = -gamepad2.right_stick_y*((1 - rt1)*0.75)-0.03; //мотор лифта
+        double axiall = gamepad2.left_stick_y*((1 - rt1)*0.75); //мотор качельки
+        double axiall2 = -gamepad2.right_stick_y*((1 - rt1)*0.75); //мотор лифта
         //axialm = -gamepad2.right_stick_y*(1 - rt1)+0.05;
         double kles = gamepad2.left_trigger*0.99; //клешня
         //rt - считывание правого триггера
@@ -399,16 +401,17 @@ public class Robot{
         boolean up1 = gamepad2.dpad_up;
         boolean down1 = gamepad2.dpad_down;
         boolean control = gamepad1.x;
+        boolean control180 = gamepad1.b;
         if (block){
-            if (open_close){
-                kles1 = 0.8;
-                open_close = false;
+            if (!open_close){
+                klesh1.setPosition(0.8);
+                open_close = true;
                 delay(210);
                 klesh1.close();
             }
             else{
-                kles1 = 0;
-                open_close = true;
+                klesh1.setPosition(0);
+                open_close = false;
                 delay(210);
             }
         }
@@ -422,12 +425,27 @@ public class Robot{
                 delay(250);
             }
         }
+        if(control180){
+            if(ic180){
+                ic180 = false;
+                delay(250);
+            }
+            else{
+                ic180 = true;
+                delay(250);
+            }
+        }
         if (ic){
             axial = -gamepad1.left_stick_y*(1 - rt);
             yaw = -gamepad1.left_stick_x*(1 - rt);
             lateral = -getTurnAngle()*0.012;
         }
-        else{
+        if (ic180){
+            axial = -gamepad1.left_stick_y*(1 - rt);
+            yaw = -gamepad1.left_stick_x*(1 - rt);
+            lateral = -(180-getTurnAngle())*0.012;
+        }
+        if(!ic180 && !ic){
             axial = -gamepad1.left_stick_y*(1 - rt);
             yaw = -gamepad1.left_stick_x*(1 - rt);
             lateral = -gamepad1.right_stick_x*(1 - rt);
@@ -528,7 +546,6 @@ public class Robot{
         lift.setPower(lift2Power);
         lift2.setPower(liftPower);
         klesh.setPosition(kleshPower);
-        klesh1.setPosition(kleshPower2);
         //man.setPower(ManPower);
 
         leftFrontDrive.setPower(leftFrontPower);
