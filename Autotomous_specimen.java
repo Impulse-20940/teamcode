@@ -93,14 +93,13 @@ public class Autotomous_specimen extends LinearOpMode {
         R.delay(500);
         R.lift_up(0.5, 1450);
         R.delay(500);
-        //R.go_byenc_y(1026);
-        R.go_byenc_y(distance);
+        R.go_byenc_y(1026);
         //R.k_up(-0.5, 500);
         R.delay(3000);
         R.lift_up(-0.5, 150);
         R.k_up(-0.55, 450);
         R.delay(2500);
-        R.lift_up(lift_power, 1800);
+        R.lift_up(-0.55, 1800);
         R.delay(500);
         klesh.setPosition(0.9);
         R.delay(500);

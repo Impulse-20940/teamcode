@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -155,7 +155,7 @@ public class Robot{
             //double kp = 0.0007;//here is coeff
             //double kd = 0.00109;
             double kp = 0.0019;//here is coeff
-            double kt = 0.02;
+            double kt = 0.012;
             double kd = 0.0039; //differential coefficient
 
             double x_er = x - enc1;
@@ -288,26 +288,31 @@ public class Robot{
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-    public void turn(double angle){
+    public void turn(double angle, double kp){
         //функция поворота по гироскопу
         get_members();
-        while (Math.abs(angle+7) > Math.abs(getTurnAngle())  && L.opModeIsActive()){
+        while (Math.abs(angle) > Math.abs(getTurnAngle())  && L.opModeIsActive()){
             if (angle < 0){
                 Er = (angle+6) - (getTurnAngle());
             } else if (angle > 0) {
                 Er = (angle-6) - (getTurnAngle());
             }
-            double kp = 0.0012;
+            //double kp = 0.0012;
             double P = kp * Er;
-            double kd = -0.0005;
-            double er_d = Er - Er_last;
-            double D = kd*er_d*(1/Er);
-            Er_last = Er;
+            //double kd = -0.0005;
+            //double er_d = Er - Er_last;
+            //double D = kd*er_d*(1/Er);
+            //Er_last = Er;
 
-            setMPower(0, -P+D, 0, P+D);
+            setMPower(0, -P, 0, P);
             telemetry.addData("getAngle()", getTurnAngle());
             telemetry.update();
         }
+        setMPower(0, 0, 0, 0);
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void stable(){
         get_members();
@@ -604,5 +609,67 @@ public class Robot{
         lift.setPower(0);
         lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    void stable(long time, double kt){
+        runtime.reset();
+        while(L.opModeIsActive() && runtime.seconds() < time){
+            double getangle = getTurnAngle();
+            double axial = 0;
+            double lateral = -getangle*kt;
+            double yaw = 0;
+
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(-rightBackPower);
+        }
+    }
+    void stable180(long time, double kt){
+        runtime.reset();
+        while(L.opModeIsActive() && runtime.seconds() < time){
+            double getangle = 180-Math.abs(getTurnAngle());
+            double axial = 0;
+            double lateral = -getangle*kt;
+            double yaw = 0;
+
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(-rightBackPower);
+            telemetry.addData("Angle is:", getangle);
+            telemetry.update();
+        }
+        setMPower(0, 0, 0, 0);
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    void calibrate_imu(){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "SensorBNO055IMUCalibration.json";
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
+        while (!imu.isGyroCalibrated()) { //Калибровка акселерометра
+            delay(30);
+            telemetry.addData("Wait", "Calibration"); //Сообщение о калибровке
+            telemetry.update();
+        }
+        telemetry.addData("Done!", "Calibrated"); //Сообщение об окончании калибровки
+        telemetry.update();
     }
 }
