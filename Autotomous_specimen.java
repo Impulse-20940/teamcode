@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+@Config
 @Autonomous(name="Autonomous_specimen")
 public class Autotomous_specimen extends LinearOpMode {
     BNO055IMU imu;
@@ -21,6 +23,9 @@ public class Autotomous_specimen extends LinearOpMode {
     DcMotor rightFrontDrive = null;
     DcMotor rightBackDrive = null;
     double x_er_last;
+    public static double distance = 0;
+    public static double lift_power = 0;
+
     @Override
     public void runOpMode() {
         Robot R = new Robot();
@@ -28,8 +33,6 @@ public class Autotomous_specimen extends LinearOpMode {
 
         //*************Не трогать!****************
         //инициализация всех используемых устройств
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-
         lift = hardwareMap.get(DcMotor.class, "l1");
         lift2 = hardwareMap.get(DcMotor.class, "l2");
         man = hardwareMap.get(DcMotor.class, "m");
@@ -88,14 +91,16 @@ public class Autotomous_specimen extends LinearOpMode {
         klesh1.close();
         R.k_up(0.55, 1100);
         R.delay(500);
-        R.lift_up(0.5, 1400);
+        R.lift_up(0.5, 1450);
         R.delay(500);
-        R.go_byenc_y(1025);
+        //R.go_byenc_y(1026);
+        R.go_byenc_y(distance);
         //R.k_up(-0.5, 500);
         R.delay(3000);
         R.lift_up(-0.5, 150);
         R.k_up(-0.55, 450);
-        R.lift_up(-0.55, 1800);
+        R.delay(2500);
+        R.lift_up(lift_power, 1800);
         R.delay(500);
         klesh.setPosition(0.9);
         R.delay(500);
