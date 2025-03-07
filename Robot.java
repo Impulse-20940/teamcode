@@ -631,8 +631,14 @@ public class Robot{
     }
     void stable180(long time, double kt){
         runtime.reset();
+        double getangle = 0;
         while(L.opModeIsActive() && runtime.seconds() < time){
-            double getangle = 180-Math.abs(getTurnAngle());
+            if (getTurnAngle() < 0) {
+                getangle = -180-Math.abs(getTurnAngle());
+            }
+            if (getTurnAngle() > 0) {
+                getangle = 180-Math.abs(getTurnAngle());
+            }
             double axial = 0;
             double lateral = -getangle*kt;
             double yaw = 0;
