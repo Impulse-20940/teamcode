@@ -81,6 +81,6 @@ public class test extends LinearOpMode {
         waitForStart();
         //***********Main code*************
         //R.go_byenc_x(300);
-        R.stable(3, 0.012);
+        R.stable180(3, 0.012);
     }
 }
