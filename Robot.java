@@ -610,10 +610,10 @@ public class Robot{
         lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-    void stable(long time, double kt){
+    void stable(double stable, long time, double kt){
         runtime.reset();
         while(L.opModeIsActive() && runtime.seconds() < time){
-            double getangle = getTurnAngle();
+            double getangle = stable-getTurnAngle();
             double axial = 0;
             double lateral = -getangle*kt;
             double yaw = 0;
@@ -677,5 +677,11 @@ public class Robot{
         }
         telemetry.addData("Done!", "Calibrated"); //Сообщение об окончании калибровки
         telemetry.update();
+    }
+    void get_sample(){
+        go_byenc_y(-400);
+        klesh1.setPosition(1);
+        k_up(-0.45, 3);
+        lift_up(0.55, 1800);
     }
 }
