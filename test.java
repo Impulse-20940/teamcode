@@ -83,5 +83,6 @@ public class test extends LinearOpMode {
         //R.go_byenc_x(300);
         R.stable180(5, 0.012);
         R.get_sample();
+        R.stable(90, 5, 0.012);
     }
 }
