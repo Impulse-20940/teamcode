@@ -48,6 +48,7 @@ public class Robot{
     boolean open_close = false;
     boolean ic;
     boolean ic180;
+    boolean icL180;
     double kles1;
     double getangle = 0;
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
@@ -389,9 +390,10 @@ public class Robot{
         boolean lb1 = gamepad1.left_bumper;
         boolean up1 = gamepad2.dpad_up;
         boolean down1 = gamepad2.dpad_down;
-        boolean control = gamepad1.x;
-        boolean control180 = gamepad1.b;
-        boolean gs = gamepad1.y;
+        boolean control = gamepad1.y;
+        boolean controlR90 = gamepad1.b;
+        boolean gs = gamepad1.x;
+        boolean controlL90 = gamepad1.a;
         if (block){
             if (!open_close){
                 klesh1.setPosition(0.8);
@@ -408,24 +410,42 @@ public class Robot{
         if(control){
             if(ic){
                 ic180 = false;
+                icL180 = false;
                 ic = false;
                 delay(250);
             }
             else{
                 ic180 = false;
+                icL180 = false;
                 ic = true;
                 delay(250);
             }
         }
-        if(control180){
+        if(controlR90){
             if(ic180){
                 ic = false;
+                icL180 = false;
                 ic180 = false;
                 delay(250);
             }
             else{
                 ic = false;
+                icL180 = false;
                 ic180 = true;
+                delay(250);
+            }
+        }
+        if(controlL90){
+            if(icL180){
+                ic = false;
+                ic180 = false;
+                icL180 = false;
+                delay(250);
+            }
+            else{
+                ic = false;
+                ic180 = false;
+                icL180 = true;
                 delay(250);
             }
         }
@@ -445,9 +465,24 @@ public class Robot{
 
              */
             getangle = (-90)-getTurnAngle();
-            axial = -gamepad1.left_stick_y*(1 - rt);;
+            axial = -gamepad1.left_stick_x*(1 - rt);;
             lateral = getangle*0.012;
-            yaw = -gamepad1.left_stick_x*(1 - rt);
+            yaw = -gamepad1.left_stick_y*(1 - rt);
+        }
+        if (icL180){
+            /*
+            if (getTurnAngle() > 0){
+                getangle = 180-getTurnAngle();
+            }
+            if (getTurnAngle() < 0){
+                getangle = -180-getTurnAngle();
+            }
+
+             */
+            getangle = 90-getTurnAngle();
+            axial = gamepad1.left_stick_x*(1 - rt);;
+            lateral = getangle*0.012;
+            yaw = gamepad1.left_stick_y*(1 - rt);
         }
         if(!ic180 && !ic){
             axial = -gamepad1.left_stick_y*(1 - rt);
@@ -455,7 +490,8 @@ public class Robot{
             lateral = -gamepad1.right_stick_x*(1 - rt);
         }
         if(gs){
-            get_sample();
+            //get_sample();
+            auto_human();
             delay(200);
         }
         //умножение на rt используется для уменьшения напряжения, подаваемого на моторы в зависимости от силы нажатия правого триггера
@@ -689,5 +725,11 @@ public class Robot{
         k_up(-0.45, 500);
         lift_up(0.55, 1800);
         k_up(-0.45, 500);
+    }
+    void auto_human(){
+        go_byenc_y(0, -270);
+        stable(-90, 3, 0.012);
+        go_byenc_x(-90, 1000);
+        go_byenc_y(0, 300);
     }
 }
