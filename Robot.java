@@ -51,6 +51,8 @@ public class Robot{
     boolean icL180;
     double kles1;
     double getangle = 0;
+    int human_state = 0;
+    int apparacy_state = 0;
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
         //НЕ ТРОГАТЬ!
         //инициализация классов
@@ -386,14 +388,14 @@ public class Robot{
         //rt - считывание правого триггера
         double rt = gamepad1.right_trigger; //правый триггер для кб
         boolean block = gamepad2.right_bumper;
-        boolean rb1 = gamepad1.right_bumper;
-        boolean lb1 = gamepad1.left_bumper;
         boolean up1 = gamepad2.dpad_up;
         boolean down1 = gamepad2.dpad_down;
         boolean control = gamepad1.y;
-        boolean controlR90 = gamepad1.b;
-        boolean gs = gamepad1.x;
-        boolean controlL90 = gamepad1.a;
+        boolean controlR90 = gamepad1.right_bumper;
+        boolean gs = gamepad1.right_stick_button;
+        boolean gsa = gamepad1.left_stick_button;
+        boolean reset_states = gamepad1.a;
+        boolean controlL90 = gamepad1.left_bumper;
         if (block){
             if (!open_close){
                 klesh1.setPosition(0.8);
@@ -438,14 +440,14 @@ public class Robot{
         if(controlL90){
             if(icL180){
                 ic = false;
-                ic180 = false;
                 icL180 = false;
+                ic180 = false;
                 delay(250);
             }
             else{
                 ic = false;
-                ic180 = false;
                 icL180 = true;
+                ic180 = false;
                 delay(250);
             }
         }
@@ -464,8 +466,8 @@ public class Robot{
             }
 
              */
-            getangle = (-90)-getTurnAngle();
-            axial = -gamepad1.left_stick_x*(1 - rt);;
+            getangle = -90-getTurnAngle();
+            axial = gamepad1.left_stick_x*(1 - rt);;
             lateral = getangle*0.012;
             yaw = -gamepad1.left_stick_y*(1 - rt);
         }
@@ -482,7 +484,7 @@ public class Robot{
             getangle = 90-getTurnAngle();
             axial = gamepad1.left_stick_x*(1 - rt);;
             lateral = getangle*0.012;
-            yaw = gamepad1.left_stick_y*(1 - rt);
+            yaw = -gamepad1.left_stick_y*(1 - rt);
         }
         if(!ic180 && !ic){
             axial = -gamepad1.left_stick_y*(1 - rt);
@@ -491,32 +493,32 @@ public class Robot{
         }
         if(gs){
             //get_sample();
-            auto_human();
+            auto_human(human_state);
+            if (human_state == 0){
+                human_state = 1;
+            } else if (human_state==1) {
+                human_state = 0;
+            }
             delay(200);
         }
+        if (gsa){
+            auto_app(apparacy_state);
+            if (apparacy_state == 0){
+                apparacy_state = 1;
+            } else if (apparacy_state == 1) {
+                apparacy_state = 0;
+            }
+            delay(200);
+        }
+        if(reset_states){
+            human_state = 0;
+            apparacy_state = 0;
+        }
         //умножение на rt используется для уменьшения напряжения, подаваемого на моторы в зависимости от силы нажатия правого триггера
-
-
         boolean up = gamepad1.dpad_up;
         boolean down = gamepad1.dpad_down;
         boolean left = gamepad1.dpad_left;
         boolean right = gamepad1.dpad_right;
-        if(lb1){
-            lateral = 0.2;
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
-        }
-        if(rb1){
-            lateral = -0.2;
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-            setMPower(rightBackPower, rightFrontPower, leftFrontPower, leftBackPower);
-        }
         if(right){
             yaw = -0.25;
             double leftFrontPower  = axial + lateral + yaw;
@@ -726,10 +728,33 @@ public class Robot{
         lift_up(0.55, 1800);
         k_up(-0.45, 500);
     }
-    void auto_human(){
-        go_byenc_y(0, -270);
-        stable(-90, 3, 0.012);
-        go_byenc_x(-90, 1000);
-        go_byenc_y(0, 300);
+    void auto_human(int state){
+        if (state == 0){
+            go_byenc_y(0, -270);
+            delay(300);
+            stable(-90, 3, 0.012);
+            delay(300);
+            go_byenc_x(-90, -1000);
+            delay(300);
+            go_byenc_y(-90, 300);
+            k_up(-0.55, 1000);
+            lift_up(0.55, 1800);
+        }
+        if (state == 1){
+            go_byenc_y(-90, -250);
+            delay(300);
+            go_byenc_x(-90, 1000);
+            delay(300);
+            stable(0, 3, 0.012);
+            go_byenc_y(0, 270);
+        }
+    }
+    void auto_app(int state){
+        if (state == 0){
+
+        }
+        if (state == 1){
+
+        }
     }
 }

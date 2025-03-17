@@ -80,6 +80,6 @@ public class test extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
         //***********Main code*************
-        R.get_sample();
+        R.go_byenc_x(-90, 200);
     }
 }
