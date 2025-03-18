@@ -51,7 +51,7 @@ public class Robot{
     boolean icL180;
     double kles1;
     double getangle = 0;
-    int human_state = 0;
+    public static int human_state = 0;
     int apparacy_state = 0;
     public void init_classes(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, LinearOpMode L) {
         //НЕ ТРОГАТЬ!
@@ -98,6 +98,10 @@ public class Robot{
         //сброс моторов
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void go_bytime(double axial, double lateral, double time) {
         //езда по времени
@@ -732,16 +736,17 @@ public class Robot{
         if (state == 0){
             go_byenc_y(0, -270);
             delay(300);
-            stable(-90, 3, 0.012);
+            stable(-90, 2, 0.012);
             delay(300);
-            go_byenc_x(-90, -1000);
+            go_byenc_x(-90, -1800);
             delay(300);
-            go_byenc_y(-90, 300);
+            go_byenc_y(-90, 580);
+            delay(300);
             k_up(-0.55, 1000);
             lift_up(0.55, 1800);
         }
         if (state == 1){
-            go_byenc_y(-90, -250);
+            go_byenc_y(-90, -580);
             delay(300);
             go_byenc_x(-90, 1000);
             delay(300);

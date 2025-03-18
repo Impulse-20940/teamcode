@@ -74,6 +74,7 @@ public class BasicOmniOpMode_Lift2 extends LinearOpMode {
 
         waitForStart();
         klesh1.setPosition(1);
+        Robot.human_state = 0;
         while (opModeIsActive()) {
             R.teleop_lift2();
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
