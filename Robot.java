@@ -734,24 +734,24 @@ public class Robot{
     }
     void auto_human(int state){
         if (state == 0){
-            go_byenc_y(0, -270);
-            delay(300);
-            stable(-90, 2, 0.012);
-            delay(300);
-            go_byenc_x(-90, -1800);
-            delay(300);
-            go_byenc_y(-90, 580);
-            delay(300);
-            k_up(-0.55, 1000);
-            lift_up(0.55, 1800);
+            double stop = 0;
+            while(stop != 1 && !gamepad1.x){
+                stable(0, 2, 0.012);
+                go_byenc_y(0, 500);
+                go_byenc_x(0, 600);
+            }
         }
         if (state == 1){
-            go_byenc_y(-90, -580);
-            delay(300);
-            go_byenc_x(-90, 1000);
-            delay(300);
-            stable(0, 3, 0.012);
-            go_byenc_y(0, 270);
+            double stop = 0;
+            while (stop != 1 && !gamepad1.x) {
+                stable(-90, 2, 0.012);
+                go_byenc_x(-90, -1000);
+                delay(100);
+                go_byenc_y(-90, 200);
+                k_up(-0.55, 1000);
+                lift_up(0.55, 1800);
+                stop = 1;
+            }
         }
     }
     void auto_app(int state){

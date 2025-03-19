@@ -92,9 +92,10 @@ public class Autotomous_specimen extends LinearOpMode {
         R.delay(500);
         R.lift_up(0.5, 1450);
         R.delay(500);
-        R.go_byenc_y(0, 1026);
+        //R.go_byenc_y(0, 1026);
+        R.go_byenc_y(0, 996);
         //R.k_up(-0.5, 500);
-        R.delay(3000);
+        R.delay(1000);
         R.lift_up(-0.5, 150);
         R.k_up(-0.55, 450);
         R.delay(2500);
@@ -103,17 +104,22 @@ public class Autotomous_specimen extends LinearOpMode {
         klesh.setPosition(1);
         R.delay(500);
         //********p2
-        R.lift_up(0.5, 1450);
-        R.delay(500);
-        R.go_byenc_y(0, 1026);
-        //R.k_up(-0.5, 500);
-        R.delay(3000);
-        R.lift_up(-0.5, 150);
-        R.k_up(-0.55, 450);
-        R.delay(2500);
-        R.lift_up(-0.55, 1800);
-        R.delay(500);
-        klesh.setPosition(1);
-        R.delay(500);
+        R.go_byenc_y(0, -270);
+        R.delay(300);
+        R.stable(-90, 2, 0.012);
+        R.delay(300);
+        R.go_byenc_x(-90, -1800);
+        R.delay(300);
+        R.go_byenc_y(-90, 580);
+        R.delay(300);
+        R.k_up(-0.55, 1000);
+        R.lift_up(0.55, 1800);
+        //*********************************
+        R.go_byenc_y(-90, -580);
+        R.delay(300);
+        R.go_byenc_x(-90, 1000);
+        R.delay(300);
+        R.stable(0, 3, 0.012);
+        R.go_byenc_y(0, 270);
     }
 }
