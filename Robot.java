@@ -737,17 +737,18 @@ public class Robot{
             double stop = 0;
             while(stop != 1 && !gamepad1.x){
                 stable(0, 2, 0.012);
-                go_byenc_y(0, 500);
+                go_byenc_y(0, 430);
                 go_byenc_x(0, 600);
+                stop = 1;
             }
         }
         if (state == 1){
             double stop = 0;
             while (stop != 1 && !gamepad1.x) {
                 stable(-90, 2, 0.012);
-                go_byenc_x(-90, -1000);
+                go_byenc_x(-90, -800);
                 delay(100);
-                go_byenc_y(-90, 200);
+                go_byenc_y(-90, 400);
                 k_up(-0.55, 1000);
                 lift_up(0.55, 1800);
                 stop = 1;
