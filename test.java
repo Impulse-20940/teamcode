@@ -22,7 +22,7 @@ public class test extends LinearOpMode {
     DcMotor leftBackDrive = null;
     DcMotor rightFrontDrive = null;
     DcMotor rightBackDrive = null;
-    public static double kt = 0;
+    public static double rast1 = 0;
     @Override
     public void runOpMode() {
         Robot R = new Robot();
@@ -80,8 +80,15 @@ public class test extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
         //***********Main code*************
-        R.stable(0, 2, 0.012);
-        R.go_byenc_y(0, 500);
+        R.go_byenc_simple(-0.5, 0, rast1);
+        /*
+        klesh.setPosition(0);
+        R.stable(-45, 2, 0.012);
+        R.go_byenc_simple(0.5, 0.5, 500);
+        klesh1.setPosition(0);
+        R.lift_up(0.53, 1800);
+        R.k_up(-0.75, 1000);
+        klesh.setPosition(1);
         /*
         R.go_byenc_y(0, -270);
         R.delay(300);

@@ -23,7 +23,9 @@ public class Autotomous_specimen extends LinearOpMode {
     DcMotor rightFrontDrive = null;
     DcMotor rightBackDrive = null;
     double x_er_last;
-
+    public static long time1;
+    public static long time;
+    public static double kp;
     @Override
     public void runOpMode() {
         Robot R = new Robot();
@@ -83,43 +85,76 @@ public class Autotomous_specimen extends LinearOpMode {
         klesh.setPosition(0);
         klesh1.setPosition(0);
         R.delay(500);
-        R.k_up(-0.55, 1000);
+        R.k_up(-0.45, 1000);
         R.delay(500);
         klesh1.setPosition(1);
         R.delay(500);
         klesh1.close();
         R.k_up(0.55, 1100);
         R.delay(500);
+        R.lift_up(0.5, 1490);
+        R.delay(500);
+        //R.go_byenc_y(0, 1026);
+        //R.go_byenc_y(0, 978);
+        R.go_byenc_y(0, 956, kp); //0.0012
+        R.go_byenc_simple(-0.2, 0, -150);
+        //R.go_byenc_y(0, rast);
+        //R.k_up(-0.5, 500);
+        R.delay(1000);
+        R.lift_up(-0.5, time); //170
+        R.k_up(0.55, time1);//1500
+        R.delay(2000);
+        R.go_bytime(-0.45, 0, 2);
+        R.delay(1000);
+        R.go_bytime(-0.8, 0, 2);
+        /*
+        R.k_up(-0.55, 427);
+        R.delay(2500);
+        R.lift_up(-0.55, 1800);
+        R.k_up(0.55, 500);
+        R.delay(500);
+         */
+        klesh.setPosition(1);
+        R.delay(500);
+        //********p2
+        //R.go_byenc_y(0, -100);
+        R.go_byenc_y(0, -500, 0.0012);
+        /*
+        R.delay(300);
+        R.stable(-90, 2, 0.012);
+        R.delay(300);
+        R.go_byenc_x(0, -500);
+        R.delay(300);
+        R.go_byenc_y(-90, rast1);
+        R.delay(300);
+        klesh.setPosition(0);
+        R.k_up(-0.47, 1000);
+        R.lift_up(0.55, 1800);
+        klesh.setPosition(1);
+        R.k_up(0.55, 1000);
+        R.lift_up(-0.55, 1800);
+        //*********************************
+        R.go_byenc_y(-90, -580);
+        R.delay(300);
+        R.go_byenc_x(-90, 300);
+        R.delay(300);
+        R.stable(0, 3, 0.012);
+        R.go_byenc_y(0, -310);
+        //**************p3
         R.lift_up(0.5, 1450);
         R.delay(500);
         //R.go_byenc_y(0, 1026);
         R.go_byenc_y(0, 996);
         //R.k_up(-0.5, 500);
         R.delay(1000);
-        R.lift_up(-0.5, 150);
+        R.lift_up(-0.5, 170);
         R.k_up(-0.55, 450);
         R.delay(2500);
         R.lift_up(-0.55, 1800);
         R.delay(500);
         klesh.setPosition(1);
         R.delay(500);
-        //********p2
-        R.go_byenc_y(0, -270);
-        R.delay(300);
-        R.stable(-90, 2, 0.012);
-        R.delay(300);
-        R.go_byenc_x(-90, -1800);
-        R.delay(300);
-        R.go_byenc_y(-90, 580);
-        R.delay(300);
-        R.k_up(-0.55, 1000);
-        R.lift_up(0.55, 1800);
-        //*********************************
-        R.go_byenc_y(-90, -580);
-        R.delay(300);
-        R.go_byenc_x(-90, 1000);
-        R.delay(300);
-        R.stable(0, 3, 0.012);
-        R.go_byenc_y(0, 270);
+
+         */
     }
 }

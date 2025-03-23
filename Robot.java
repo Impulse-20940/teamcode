@@ -107,7 +107,7 @@ public class Robot{
         //езда по времени
         get_members();
         double getangle = getTurnAngle();
-        yaw = -getangle*0.005;
+        yaw = -getangle*0.012;
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
@@ -115,8 +115,8 @@ public class Robot{
 
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        leftBackDrive.setPower(-leftBackPower);
+        rightBackDrive.setPower(-rightBackPower);
         runtime.reset();
         while (L.opModeIsActive() && (runtime.seconds() < time)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
@@ -132,7 +132,7 @@ public class Robot{
             //езда по времени
             double getangle = getTurnAngle();
             double axial = a;
-            double lateral = -getangle*0.012;
+            double lateral = (45-getangle)*0.012;
             yaw = l;
 
             double leftFrontPower  = axial + lateral + yaw;
@@ -246,49 +246,89 @@ public class Robot{
         }
         setMPower(0, 0, 0, 0);
     }
-    public void go_byenc_y(double stable, double y) {
+    public void go_byenc_y(double stable, double y, double kp) {
         //езда по энкодеру
         get_members();
         reset_using_motors();
         init_enc_motors();
-        while ((Math.abs(-rightFrontDrive.getCurrentPosition()) < Math.abs(y)) && L.opModeIsActive()){
-            double enc2 = -rightFrontDrive.getCurrentPosition();
-            double kp = 0.0039;//here is coeff
-            double kt = 0.012;
-            //double kd = 0.0004; //differential coefficient
-            double y_er = y - enc2;
-            double y_p_reg = y_er*kp;
-            double getangle = stable-getTurnAngle();
-            //double y_er_d = y_er - y_er_last;
-            //double y_d_reg = kd*y_er_d*(1/y_er);
-            //double y_pd = y_p_reg + y_d_reg;
-            //y_er_last = y_er;
+        if (y > 0){
+            while ((-rightFrontDrive.getCurrentPosition() < y) && L.opModeIsActive()){
+                double enc2 = -rightFrontDrive.getCurrentPosition();
+                double kt = 0.012;
+                //double kd = 0.0004; //differential coefficient
+                double y_er = y - enc2;
+                double y_p_reg = y_er*kp;
+                double getangle = stable-getTurnAngle();
+                //double y_er_d = y_er - y_er_last;
+                //double y_d_reg = kd*y_er_d*(1/y_er);
+                //double y_pd = y_p_reg + y_d_reg;
+                //y_er_last = y_er;
 
-            double axial = y_p_reg;
-            double lateral = getangle*kt;
-            double yaw = 0;
+                double axial = y_p_reg;
+                double lateral = getangle*kt;
+                double yaw = 0;
 
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+                double leftFrontPower  = axial + lateral + yaw;
+                double rightFrontPower = axial - lateral - yaw;
+                double leftBackPower   = axial - lateral + yaw;
+                double rightBackPower  = axial + lateral - yaw;
 
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(-leftBackPower);
-            rightBackDrive.setPower(-rightBackPower);
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(-leftBackPower);
+                rightBackDrive.setPower(-rightBackPower);
 
-            telemetry.addData("Now is", "%7d",
-                    -rightFrontDrive.getCurrentPosition());
-            telemetry.addData("Angle is:", getangle);
-            telemetry.update();
+                telemetry.addData("Now is", "%7d",
+                        -rightFrontDrive.getCurrentPosition());
+                telemetry.addData("Angle is:", getangle);
+                telemetry.update();
 
-            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+        } else if (y < 0) {
+            while ((-rightFrontDrive.getCurrentPosition() > y) && L.opModeIsActive()){
+                double enc2 = -rightFrontDrive.getCurrentPosition();
+                double kt = 0.012;
+                //double kd = 0.0004; //differential coefficient
+                double y_er = y - enc2;
+                double y_p_reg = y_er*kp;
+                double getangle = stable-getTurnAngle();
+                //double y_er_d = y_er - y_er_last;
+                //double y_d_reg = kd*y_er_d*(1/y_er);
+                //double y_pd = y_p_reg + y_d_reg;
+                //y_er_last = y_er;
+
+                double axial = y_p_reg;
+                double lateral = getangle*kt;
+                double yaw = 0;
+
+                double leftFrontPower  = axial + lateral + yaw;
+                double rightFrontPower = axial - lateral - yaw;
+                double leftBackPower   = axial - lateral + yaw;
+                double rightBackPower  = axial + lateral - yaw;
+
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(-leftBackPower);
+                rightBackDrive.setPower(-rightBackPower);
+
+                telemetry.addData("Now is", "%7d",
+                        -rightFrontDrive.getCurrentPosition());
+                telemetry.addData("Angle is:", getangle);
+                telemetry.update();
+
+                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
         }
         setMPower(0, 0, 0, 0);
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -726,7 +766,7 @@ public class Robot{
         telemetry.update();
     }
     void get_sample(){
-        go_byenc_y(0, -270);
+        go_byenc_y(0, -270, 0.0012);
         klesh.setPosition(1);
         k_up(-0.45, 500);
         lift_up(0.55, 1800);
@@ -737,7 +777,7 @@ public class Robot{
             double stop = 0;
             while(stop != 1 && !gamepad1.x){
                 stable(0, 2, 0.012);
-                go_byenc_y(0, 430);
+                go_byenc_y(0, 430, 0.0012);
                 go_byenc_x(0, 600);
                 stop = 1;
             }
@@ -748,7 +788,7 @@ public class Robot{
                 stable(-90, 2, 0.012);
                 go_byenc_x(-90, -800);
                 delay(100);
-                go_byenc_y(-90, 400);
+                go_byenc_y(-90, 400, 0.0012);
                 k_up(-0.55, 1000);
                 lift_up(0.55, 1800);
                 stop = 1;
