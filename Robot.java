@@ -35,6 +35,8 @@ public class Robot{
     Gamepad gamepad2;
     LinearOpMode L;
 
+    // HELLO I'M SIGMAPIGGY
+
     double x_er_last;
     double y_er_last;
     double x_p_reg;
@@ -634,10 +636,10 @@ public class Robot{
         double getangle = 0;
         while(L.opModeIsActive() && runtime.seconds() < time){
             if (getTurnAngle() < 0) {
-                getangle = -180-getTurnAngle();
+                getangle = 180-getTurnAngle();
             }
             if (getTurnAngle() > 0) {
-                getangle = 180-getTurnAngle();
+                getangle = -180-getTurnAngle();
             }
             double axial = 0;
             double lateral = -getangle*kt;
