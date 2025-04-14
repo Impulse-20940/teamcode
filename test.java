@@ -80,7 +80,27 @@ public class test extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
         //***********Main code*************
-        //R.go_byenc_x(300);
-        R.stable180(3, 0.012);
+        R.stable(0, 2, 0.012);
+        R.go_byenc_y(0, 500);
+        /*
+        R.go_byenc_y(0, -270);
+        R.delay(300);
+        R.stable(-90, 2, 0.012);
+        R.delay(300);
+        R.go_byenc_x(-90, -1800);
+        R.delay(300);
+        R.go_byenc_y(-90, 580);
+        R.delay(300);
+        R.k_up(-0.55, 1000);
+        R.lift_up(0.55, 1800);
+        //*********************************
+        R.go_byenc_y(-90, -580);
+        R.delay(300);
+        R.go_byenc_x(-90, 1000);
+        R.delay(300);
+        R.stable(0, 3, 0.012);
+        R.go_byenc_y(0, 270);
+
+         */
     }
 }
