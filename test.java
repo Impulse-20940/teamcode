@@ -5,23 +5,33 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="test")
 @Config
 public class test extends LinearOpMode {
+    I2cAddr i2c;
+    AnalogInput echo;
+    AnalogInput trig;
     BNO055IMU imu;
+    ElapsedTime runtime = new ElapsedTime();
+    /*
     DcMotor lift = null;
     DcMotor lift2 = null;
     DcMotor man = null;
     Servo klesh;
     Servo klesh1;
-    ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontDrive = null;
     DcMotor leftBackDrive = null;
     DcMotor rightFrontDrive = null;
     DcMotor rightBackDrive = null;
+     */
     public static double kt = 0;
     @Override
     public void runOpMode() {
@@ -31,7 +41,9 @@ public class test extends LinearOpMode {
         //*************Не трогать!****************
         //инициализация всех используемых устройств
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-
+        echo = hardwareMap.get(AnalogInput.class, "echo");
+        trig = hardwareMap.get(AnalogInput.class, "trig");
+        /*
         lift = hardwareMap.get(DcMotor.class, "l1");
         lift2 = hardwareMap.get(DcMotor.class, "l2");
         man = hardwareMap.get(DcMotor.class, "m");
@@ -52,6 +64,7 @@ public class test extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+         */
         //*****************************************
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -69,6 +82,7 @@ public class test extends LinearOpMode {
         }
         telemetry.addData("Done!", "Calibrated"); //Сообщение об окончании калибровки
         telemetry.update();
+        /*
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -76,31 +90,22 @@ public class test extends LinearOpMode {
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+         */
         runtime.reset();
         // Wait for the game to start (driver presses START)
         waitForStart();
         //***********Main code*************
-        R.stable(0, 2, 0.012);
-        R.go_byenc_y(0, 500);
+        while (opModeIsActive()){
+            double voltage = echo.getVoltage();
+            telemetry.addData("echo", voltage);
+            telemetry.update();
+        }
         /*
-        R.go_byenc_y(0, -270);
-        R.delay(300);
-        R.stable(-90, 2, 0.012);
-        R.delay(300);
-        R.go_byenc_x(-90, -1800);
-        R.delay(300);
-        R.go_byenc_y(-90, 580);
-        R.delay(300);
-        R.k_up(-0.55, 1000);
-        R.lift_up(0.55, 1800);
-        //*********************************
-        R.go_byenc_y(-90, -580);
-        R.delay(300);
-        R.go_byenc_x(-90, 1000);
-        R.delay(300);
-        R.stable(0, 3, 0.012);
-        R.go_byenc_y(0, 270);
-
+        while (opModeIsActive()){
+            double get_i2c = i2c.get8Bit();
+            telemetry.addData("i2c reading", get_i2c);
+            telemetry.update();
+        }
          */
     }
 }
