@@ -117,10 +117,8 @@ public class AprilTag extends LinearOpMode {
         // Note: Decimation can be changed on-the-fly to adapt during a match.
         //aprilTag.setDecimation(3);
 
-        // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
             builder.setCamera(hardwareMap.get(WebcamName.class, "cam"));
         } else {
@@ -141,7 +139,6 @@ public class AprilTag extends LinearOpMode {
         // If set "false", monitor shows camera view without annotations.
         //builder.setAutoStopLiveView(false);
 
-        // Set and enable the processor.
         builder.addProcessor(aprilTag);
 
         // Build the Vision Portal, using the above settings.
@@ -150,7 +147,7 @@ public class AprilTag extends LinearOpMode {
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);
 
-    }   // end method initAprilTag()
+    }
     @SuppressLint("DefaultLocale")
     private void telemetryAprilTag() {
 
