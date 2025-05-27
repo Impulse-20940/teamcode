@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.programs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -8,6 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.lag.Lift_and_grab;
+import org.firstinspires.ftc.teamcode.wheelbase.Regualizers;
+
 @Config
 @Autonomous(name="Autonomous_specimen")
 public class Autotomous_specimen extends LinearOpMode {
@@ -28,8 +33,10 @@ public class Autotomous_specimen extends LinearOpMode {
     public static double kp;
     @Override
     public void runOpMode() {
-        Robot R = new Robot();
-        R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        Regualizers reg = new Regualizers();
+        Lift_and_grab lag = new Lift_and_grab();
+        lag.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        reg.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
 
         //*************Не трогать!****************
         //инициализация всех используемых устройств
@@ -84,29 +91,29 @@ public class Autotomous_specimen extends LinearOpMode {
         //*****p1
         klesh.setPosition(0);
         klesh1.setPosition(0);
-        R.delay(500);
-        R.k_up(-0.45, 1000);
-        R.delay(500);
+        reg.delay(500);
+        lag.k_up(-0.45, 1000);
+        reg.delay(500);
         klesh1.setPosition(1);
-        R.delay(500);
+        reg.delay(500);
         klesh1.close();
-        R.k_up(0.55, 1100);
-        R.delay(500);
-        R.lift_up(0.5, 1490);
-        R.delay(500);
+        lag.k_up(0.55, 1100);
+        reg.delay(500);
+        lag.lift_up(0.5, 1490);
+        reg.delay(500);
         //R.go_byenc_y(0, 1026);
         //R.go_byenc_y(0, 978);
-        R.go_byenc_y(0, 956, kp); //0.0012
-        R.go_byenc_simple(-0.2, 0, -150);
+        reg.go_byenc_y(0, 956, kp); //0.0012
+        reg.go_byenc_simple(-0.2, 0, -150);
         //R.go_byenc_y(0, rast);
         //R.k_up(-0.5, 500);
-        R.delay(1000);
-        R.lift_up(-0.5, time); //170
-        R.k_up(0.55, time1);//1500
-        R.delay(2000);
-        R.go_bytime(-0.45, 0, 2);
-        R.delay(1000);
-        R.go_bytime(-0.8, 0, 2);
+        reg.delay(1000);
+        lag.lift_up(-0.5, time); //170
+        lag.k_up(0.55, time1);//1500
+        reg.delay(2000);
+        reg.go_bytime(-0.45, 0, 2);
+        reg.delay(1000);
+        reg.go_bytime(-0.8, 0, 2);
         /*
         R.k_up(-0.55, 427);
         R.delay(2500);
@@ -115,10 +122,10 @@ public class Autotomous_specimen extends LinearOpMode {
         R.delay(500);
          */
         klesh.setPosition(1);
-        R.delay(500);
+        reg.delay(500);
         //********p2
         //R.go_byenc_y(0, -100);
-        R.go_byenc_y(0, -500, 0.0012);
+        reg.go_byenc_y(0, -500, 0.0012);
         /*
         R.delay(300);
         R.stable(-90, 2, 0.012);

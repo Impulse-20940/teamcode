@@ -1,10 +1,14 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.programs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.opmodes.superTeleOp;
+
 @TeleOp(name="TeleOp_lift1")
 
 public class BasicOmniOpMode_Lift1 extends LinearOpMode {
@@ -23,6 +27,7 @@ public class BasicOmniOpMode_Lift1 extends LinearOpMode {
 
     public void runOpMode() {
         Robot R = new Robot();
+        superTeleOp tel = new superTeleOp();
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
         klesh = hardwareMap.get(Servo.class, "kl");
         klesh1 = hardwareMap.get(Servo.class, "kl1");
@@ -55,6 +60,6 @@ public class BasicOmniOpMode_Lift1 extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            R.teleop_lift1();
+            tel.teleop_lift1();
         }
     }}

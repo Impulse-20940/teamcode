@@ -1,9 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.programs;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.wheelbase.Regualizers;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="Autonomous_parking")
@@ -17,8 +20,8 @@ public class Autonomous_parking extends LinearOpMode {
     BNO055IMU imu;
     @Override
     public void runOpMode() {
-        Robot R = new Robot();
-        R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        Regualizers reg = new Regualizers();
+        reg.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
         runtime.reset();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
@@ -50,7 +53,7 @@ public class Autonomous_parking extends LinearOpMode {
 
         // Wait for the game to start (driver presses START)
         waitForStart();
-        R.go_bytime(-0.5, 0, 1);
-        R.go_bytime(0, -0.7, 3.7);
+        reg.go_bytime(-0.5, 0, 1);
+        reg.go_bytime(0, -0.7, 3.7);
     }
 }

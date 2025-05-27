@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.programs;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.opmodes.superTeleOp;
 
 @TeleOp(name="TeleOp_lift2")
 
@@ -26,6 +29,8 @@ public class BasicOmniOpMode_Lift2 extends LinearOpMode {
     BNO055IMU imu;
     public void runOpMode() {
         Robot R = new Robot();
+        superTeleOp tel = new superTeleOp();
+        tel.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         klesh = hardwareMap.get(Servo.class, "kl");
@@ -76,7 +81,7 @@ public class BasicOmniOpMode_Lift2 extends LinearOpMode {
         klesh1.setPosition(1);
         Robot.human_state = 0;
         while (opModeIsActive()) {
-            R.teleop_lift2();
+            tel.teleop_lift2();
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
