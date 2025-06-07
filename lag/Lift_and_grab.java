@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.lag;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.wheelbase.Regualizers;
 
 public class Lift_and_grab extends Robot {
     public void k_up(double power, long time){
