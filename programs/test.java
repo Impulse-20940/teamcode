@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.lag.Lift_and_grab;
 
 @Autonomous(name="test")
 @Config
@@ -25,26 +26,11 @@ public class test extends LinearOpMode {
     DcMotor leftBackDrive = null;
     DcMotor rightFrontDrive = null;
     DcMotor rightBackDrive = null;
-    public static double rast1 = 0;
     @Override
     public void runOpMode() {
-        Robot R = new Robot();
-        R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
-
-        //*************Не трогать!****************
-        //инициализация всех используемых устройств
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        lift = hardwareMap.get(DcMotor.class, "l1");
-        lift2 = hardwareMap.get(DcMotor.class, "l2");
-        man = hardwareMap.get(DcMotor.class, "m");
-        klesh = hardwareMap.get(Servo.class, "kl");
-        klesh1 = hardwareMap.get(Servo.class, "kl1");
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        Lift_and_grab lag = new Lift_and_grab();
+        lag.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        lag.get_members();
 
         lift.setDirection(DcMotor.Direction.FORWARD);
         lift2.setDirection(DcMotor.Direction.REVERSE);
@@ -80,8 +66,13 @@ public class test extends LinearOpMode {
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         runtime.reset();
-        // Wait for the game to start (driver presses START)
         waitForStart();
+        klesh1.setPosition(1);
+        lag.k_up(-0.5, 1000);
+        lag.delay(300);
+        klesh1.setPosition(0);
+        lag.k_up(0.5, 1100);
+        lag.lift_up(0.5, 500);
 
     }
 }

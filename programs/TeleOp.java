@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.programs;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,9 +10,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.opmodes.superTeleOp;
 
-@TeleOp(name="TeleOp_lift1")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
 
-public class BasicOmniOpMode_Lift1 extends LinearOpMode {
+public class TeleOp extends LinearOpMode {
     //Манипулятор это качелька
     private Servo klesh = null;
     private Servo klesh1 = null;
@@ -24,11 +25,13 @@ public class BasicOmniOpMode_Lift1 extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-
+    BNO055IMU imu;
     public void runOpMode() {
         Robot R = new Robot();
         superTeleOp tel = new superTeleOp();
+        tel.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
         R.init_classes(hardwareMap, telemetry, gamepad1, gamepad2, this);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         klesh = hardwareMap.get(Servo.class, "kl");
         klesh1 = hardwareMap.get(Servo.class, "kl1");
         lift = hardwareMap.get(DcMotor.class, "l1");
@@ -55,11 +58,30 @@ public class BasicOmniOpMode_Lift1 extends LinearOpMode {
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters(); //Акселерометра
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "SensorBNO055IMUCalibration.json";
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
+        while (!imu.isGyroCalibrated()) { //Калибровка акселерометра
+            sleep(30);
+            telemetry.addData("Wait", "Calibration"); //Сообщение о калибровке
+            telemetry.update();
+        }
+        telemetry.addData("Done!", "Calibrated"); //Сообщение об окончании калибровки
+        telemetry.update();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
+        klesh1.setPosition(1);
         while (opModeIsActive()) {
-            tel.teleop_lift1();
+            tel.teleop();
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-    }}
+    }
+}
